@@ -3,14 +3,6 @@ import { usuario } from "../db/usuario.js";
 import bcrypt from "bcrypt";
 
 class UsuarioService extends Service {
-  // obtenerUsuario = async ({ id }) => {
-  //   try {
-  //     const payload = await this.database.obtenerUsuario(id);
-  //     return payload;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // };
   crearCuenta = async (data) => {
     try {
       //Valiido si ya existe el usuario

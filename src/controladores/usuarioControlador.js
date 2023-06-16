@@ -36,7 +36,6 @@ class UsuarioController extends Controller {
 
       return res.status(201).json({ status: "OK", data: payload });
     } catch (error) {
-      console.log(error);
       if (error instanceof ZodError) {
         const zodError = mostrarZodError(error);
 
