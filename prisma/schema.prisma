@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//Crud
+enum Rol {
+  ESTUDIANTE
+  MAESTRO
+  COORDINADOR
+}
+
+model Usuarios {
+  id       Int    @id @default(autoincrement())
+  nombre   String
+  email    String @unique
+  password String
+
+  role Rol @default(ESTUDIANTE)
+
+  nivelAcademico UsuariosNivelAcademico[]
+
+  equiposLider   Equipos[]
+  equiposJugador UsuariosEquipos[]
+
+  usuariosPartidos UsuariosPartidos[]
+
+  partidoMaestro Partidos[] @relation("partidosMaestro")
+}
+
+model NivelAcademico {
+  id    Int    @id @default(autoincrement())
+  nivel String
+
+  estudiantes UsuariosNivelAcademico[]
+}
+
+model UsuariosNivelAcademico {
+  id                Int @id @default(autoincrement())
+  id_estudiante     Int
+  id_nivelAcademico Int
+
+  estudiante     Usuarios       @relation(fields: [id_estudiante], references: [id])
+  nivelAcademico NivelAcademico @relation(fields: [id_nivelAcademico], references: [id])
+}
+
+//Crud
+model Deporte {
+  id                    Int    @id @default(autoincrement())
+  nombre                String
+  descripcion           String
+  limiteJugadores       Int
+  limiteJugadoresCambio Int
+  id_tipoDeporte        Int
+
+  tipoDeporte TipoDeporte @relation(fields: [id_tipoDeporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  zonaDeJuegos ZonaDejuego[]
+  partidos     Partidos[]
+}
+
+model TipoDeporte {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  descripcion String
+
+  deportes Deporte[]
+}
+
+//Crud
+model ZonaDejuego {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  id_deporte Int
+
+  deporte  Deporte               @relation(fields: [id_deporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  imagenes ImagenesZonaDeJuego[]
+}
+
+model ImagenesZonaDeJuego {
+  id             Int    @id @default(autoincrement())
+  imagen_url     String
+  id_zonaDeJuego Int
+
+  zonaDeJuego ZonaDejuego @relation(fields: [id_zonaDeJuego], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+//Crud
+model Equipos {
+  id              Int    @id @default(autoincrement())
+  nombre          String
+  avatar_url      String
+  password_access String
+  id_lider        Int
+
+  lider Usuarios @relation(fields: [id_lider], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  partidosLocal     Partidos[]         @relation("equipo_local")
+  partidosVisitante Partidos[]         @relation("equipo_visitante")
+  usuarios          UsuariosEquipos[]
+  usuariosPartidos  UsuariosPartidos[]
+}
+
+model UsuariosEquipos {
+  id          Int @id @default(autoincrement())
+  id_equipo   Int
+  id_usuarios Int
+
+  equipo   Equipos  @relation(fields: [id_equipo], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarios Usuarios @relation(fields: [id_usuarios], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+model Partidos {
+  id                  Int      @id @default(autoincrement())
+  descripcion         String
+  fecha               DateTime
+  id_estado           Int
+  id_usuarioMaestro   Int?
+  id_deporte          Int
+  id_equipo_local     Int
+  id_equipo_visitante Int
+
+  estado           PartidosEstado @relation(fields: [id_estado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarioMaestro   Usuarios?      @relation("partidosMaestro", fields: [id_usuarioMaestro], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  deporte          Deporte        @relation(fields: [id_deporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  equipo_local     Equipos        @relation("equipo_local", fields: [id_equipo_local], references: [id])
+  equipo_visitante Equipos        @relation("equipo_visitante", fields: [id_equipo_visitante], references: [id])
+
+  usuarios UsuariosPartidos[]
+}
+
+model UsuariosPartidos {
+  id         Int     @id @default(autoincrement())
+  esReserva  Boolean
+  id_usuario Int
+  id_partido Int
+  id_equipo  Int
+
+  partido Partidos @relation(fields: [id_partido], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuario Usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  equipo  Equipos  @relation(fields: [id_equipo], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+model PartidosEstado {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  descripcion String
+
+  partidos Partidos[]
+}
