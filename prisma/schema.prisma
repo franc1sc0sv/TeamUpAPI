@@ -9,36 +9,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//Crud
+// Tablas de datos predeterminados
 enum Rol {
   ESTUDIANTE
   MAESTRO
   COORDINADOR
 }
 
-model Usuarios {
-  id       Int    @id @default(autoincrement())
-  nombre   String
-  email    String @unique
-  password String
-
-  role Rol @default(ESTUDIANTE)
-
-  nivelAcademico UsuariosNivelAcademico[]
-
-  equiposLider   Equipos[]
-  equiposJugador UsuariosEquipos[]
-
-  usuariosPartidos UsuariosPartidos[]
-
-  partidoMaestro Partidos[] @relation("partidosMaestro")
+model NivelAcademico {
+  id          Int                      @id @default(autoincrement())
+  nivel       String
+  estudiantes UsuariosNivelAcademico[]
 }
 
-model NivelAcademico {
-  id    Int    @id @default(autoincrement())
-  nivel String
+model TipoDeporte {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  deportes    Deporte[]
+}
 
-  estudiantes UsuariosNivelAcademico[]
+model PartidosEstado {
+  id          Int        @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  partidos    Partidos[]
+}
+
+// Tablas de datos
+
+model Usuarios {
+  id               Int                      @id @default(autoincrement())
+  nombre           String
+  email            String                   @unique
+  password         String
+  role             Rol                      @default(ESTUDIANTE)
+  nivelAcademico   UsuariosNivelAcademico[]
+  equiposLider     Equipos[]
+  equiposJugador   UsuariosEquipos[]
+  usuariosPartidos UsuariosPartidos[]
+  partidoMaestro   Partidos[]               @relation("partidosMaestro")
 }
 
 model UsuariosNivelAcademico {
@@ -50,7 +60,6 @@ model UsuariosNivelAcademico {
   nivelAcademico NivelAcademico @relation(fields: [id_nivelAcademico], references: [id])
 }
 
-//Crud
 model Deporte {
   id                    Int    @id @default(autoincrement())
   nombre                String
@@ -65,15 +74,6 @@ model Deporte {
   partidos     Partidos[]
 }
 
-model TipoDeporte {
-  id          Int    @id @default(autoincrement())
-  nombre      String
-  descripcion String
-
-  deportes Deporte[]
-}
-
-//Crud
 model ZonaDejuego {
   id         Int    @id @default(autoincrement())
   nombre     String
@@ -91,7 +91,6 @@ model ImagenesZonaDeJuego {
   zonaDeJuego ZonaDejuego @relation(fields: [id_zonaDeJuego], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-//Crud
 model Equipos {
   id              Int    @id @default(autoincrement())
   nombre          String
@@ -145,12 +144,4 @@ model UsuariosPartidos {
   partido Partidos @relation(fields: [id_partido], references: [id], onDelete: Cascade, onUpdate: Cascade)
   usuario Usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Cascade, onDelete: Cascade)
   equipo  Equipos  @relation(fields: [id_equipo], references: [id], onUpdate: Cascade, onDelete: Cascade)
-}
-
-model PartidosEstado {
-  id          Int    @id @default(autoincrement())
-  nombre      String
-  descripcion String
-
-  partidos Partidos[]
 }

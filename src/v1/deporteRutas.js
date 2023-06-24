@@ -1,15 +1,17 @@
 import { Router } from "express";
-import { deporteControlador } from "../controladores/deporteControlador";
-import { autentifiacion } from "../middleware/autentificacion";
+import { deporteControlador } from "../controladores/deporteControlador.js";
+import { autentifiacion } from "../middleware/autentificacion.js";
+import { __ROL__ } from "../constantes/roles.js";
 
-const deporteRouter = Router()
+export const deporteRouter = Router();
 
-deporteRouter.route("/")
-    .get(deporteControlador.obtenerTodos)
-    .post(autentifiacion(["COORDINADOR"]), deporteControlador.crear)
+deporteRouter
+  .route("/")
+  .get(deporteControlador.obtenerTodos)
+  .post(autentifiacion(__ROL__.COORDINADOR), deporteControlador.crear);
 
-
-deporteRouter.route("/")
-    .get(deporteControlador.obtenerUno)
-    .put(autentifiacion(["COORDINADOR"]), deporteControlador.actualizarUno)
-    .delete(autentifiacion(["COORDINADOR"]), deporteControlador.eliminarUno)
+deporteRouter
+  .route("/")
+  .get(deporteControlador.obtenerUno)
+  .put(autentifiacion(__ROL__.COORDINADOR), deporteControlador.actualizarUno)
+  .delete(autentifiacion(__ROL__.COORDINADOR), deporteControlador.eliminarUno);

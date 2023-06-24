@@ -10,7 +10,6 @@ import {
   usuarioLogeoEsquema,
 } from "../esquemas/usuariosEsquemas.js";
 import { usuarioServicio } from "../servicios/usuarioServicio.js";
-import { json } from "express";
 
 class UsuarioController extends Controller {
   obtenerUsuario = async (req, res) => {
@@ -31,7 +30,9 @@ class UsuarioController extends Controller {
       const payload = await this.service.crearCuenta(data);
 
       if (!payload) {
-        return res.status(400).json({ status: "FAILED", data: { error: "El usuario ya existe" } })
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "El usuario ya existe" } });
       }
 
       return res.status(201).json({ status: "OK", data: payload });
@@ -55,11 +56,15 @@ class UsuarioController extends Controller {
         datosValidos
       );
 
-      if (usuarioEncontrado.error) return res.status(401).json({ status: "FAILED", data: { error: usuarioEncontrado.error } })
+      if (usuarioEncontrado.error)
+        return res
+          .status(401)
+          .json({ status: "FAILED", data: { error: usuarioEncontrado.error } });
 
-      const token = jwt.sign({
-        id: usuarioEncontrado.id
-      },
+      const token = jwt.sign(
+        {
+          id: usuarioEncontrado.id,
+        },
         process.env.JWT_SECRET
       );
 

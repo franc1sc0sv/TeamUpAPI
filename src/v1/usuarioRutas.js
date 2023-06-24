@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { usuarioControlador } from "../controladores/usuarioControlador.js";
 import { autentifiacion } from "../middleware/autentificacion.js";
+import { __ROL__ } from "../constantes/roles.js";
 
 const usuarioRouter = Router();
 
@@ -14,7 +15,7 @@ usuarioRouter.route("/:id").get(usuarioControlador.obtenerUno);
 usuarioRouter
   .route("/actualizarDatos")
   .put(
-    autentifiacion(["ESTUDIANTE", "MAESTRO", "COORDINADOR"]),
+    autentifiacion(__ROL__.TODOS),
     usuarioControlador.actualizarDatosUsuario
   );
 

@@ -6,7 +6,7 @@ class UsuarioDB extends Database {
     try {
       // Se busca un objeto en la tabla que coincida con el ID proporcionado
       const payload = await prisma[this.tabla].findFirst({
-        where: { email },
+        where: { id: parseInt(id) },
       });
       return payload;
     } catch (error) {

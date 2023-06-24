@@ -1,7 +1,7 @@
-import { Database } from "../clases/BaseDeDatos";
+import { Database } from "../clases/BaseDeDatos.js";
 
-class DeporteDB extends Database { }
+class DeporteDB extends Database {}
 
-const deporte = new DeporteDB("Deporte")
+const deporte = new DeporteDB("Deporte");
 
-export { deporte }
+export { deporte };

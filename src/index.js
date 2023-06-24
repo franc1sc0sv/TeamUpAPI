@@ -2,27 +2,33 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
+//Routers
 import { usuarioRouter } from "./v1/usuarioRutas.js";
+import { deporteRouter } from "./v1/deporteRutas.js";
+import { zonaJuegoRouter } from "./v1/zonaJuegoRouter.js";
 
-dotenv.config();
-
-//Configuracion del servidor
+//Constants
+const BASE_URL = "/api/v1";
 const PORT = process.env.PORT || 8080;
 const app = express();
 
-//Permite recibir en el body datos en JSON
+//Config
+dotenv.config();
 app.use(express.json());
-//Permite manejar peticiones HTTP de otros lados
 app.use(cors());
+app.use("/uploads", express.static("./uploads"));
 
 //Router
-app.use("/api/v1/usuario", usuarioRouter);
+app.use(BASE_URL + "/usuario", usuarioRouter);
+app.use(BASE_URL + "/deporte", deporteRouter);
+app.use(BASE_URL + "/zonaJuego", zonaJuegoRouter);
 
-//Ruta por defecto "/"
+//Default route
 app.get("/", (req, res) => {
   res.send("Welcome to TeamUp API - Lisening at: " + PORT);
 });
 
+//Initialize server
 app.listen(PORT, () => {
   console.log("Lisening at: " + PORT);
 });
