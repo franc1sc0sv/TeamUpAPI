@@ -60,6 +60,7 @@ class Database {
       // Retorna el objeto actualizado como resultado exitoso
       return payload;
     } catch (error) {
+      console.log(error);
       // Si hay un error al actualizar el objeto, se lanza una excepción con un mensaje de error personalizado
       throw { status: "FAILED", data: { error: "Registro no existe !" } };
     }

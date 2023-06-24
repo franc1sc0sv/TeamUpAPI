@@ -19,6 +19,7 @@ const usuarioEsquema = z.object({
     .string({ required_error: "La contraseña debe ser un string" })
     .nonempty("La contraseña no debe estar vacio")
     .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
+  id_nivelAcademico: z.string().regex(/^\d+$/).transform(Number),
 });
 
 const usuarioLogeoEsquema = z.object({
@@ -45,6 +46,7 @@ const usuarioEsquemaActualizar = z.object({
     .nonempty("La contraseña no debe estar vacio")
     .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" })
     .optional(),
+  id_nivelAcademico: z.string().regex(/^\d+$/).transform(Number).optional(),
 });
 
 export { usuarioEsquema, usuarioEsquemaActualizar, usuarioLogeoEsquema };
