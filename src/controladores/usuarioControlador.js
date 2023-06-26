@@ -1,16 +1,15 @@
-import { ZodError, date } from "zod";
-import jwt from "jsonwebtoken";
-
-import { mostrarZodError } from "../esquemas/utils.js";
-
 import { Controller } from "../clases/Controlador.js";
+import { usuarioServicio } from "../servicios/usuarioServicio.js";
+
 import {
   usuarioEsquema,
   usuarioEsquemaActualizar,
   usuarioLogeoEsquema,
 } from "../esquemas/usuariosEsquemas.js";
-import { usuarioServicio } from "../servicios/usuarioServicio.js";
-import { json } from "express";
+
+import { ZodError } from "zod";
+import { mostrarZodError } from "../esquemas/utils.js";
+import jwt from "jsonwebtoken";
 
 class UsuarioController extends Controller {
   buscarUsuarioPorCredenciales = async (req, res) => {

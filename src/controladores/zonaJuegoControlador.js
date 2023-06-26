@@ -92,7 +92,6 @@ class ZonaJuegoController extends Controller {
           .status(200)
           .json({ status: "FAILED", data: { error: "ID requerido" } });
       }
-      console.log(files);
 
       if (!files?.length) {
         return res
@@ -106,7 +105,6 @@ class ZonaJuegoController extends Controller {
       });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
-      console.log(error);
       if (error instanceof ZodError) {
         const zodError = mostrarZodError(error);
         return res

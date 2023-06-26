@@ -6,6 +6,7 @@ import cors from "cors";
 import { usuarioRouter } from "./v1/usuarioRutas.js";
 import { deporteRouter } from "./v1/deporteRutas.js";
 import { zonaJuegoRouter } from "./v1/zonaJuegoRouter.js";
+import { equipoRouter } from "./v1/equipoRutas.js";
 
 //Constants
 const BASE_URL = "/api/v1";
@@ -22,6 +23,7 @@ app.use("/uploads", express.static("./uploads"));
 app.use(BASE_URL + "/usuario", usuarioRouter);
 app.use(BASE_URL + "/deporte", deporteRouter);
 app.use(BASE_URL + "/zonaJuego", zonaJuegoRouter);
+app.use(BASE_URL + "/equipo", equipoRouter);
 
 //Default route
 app.get("/", (req, res) => {

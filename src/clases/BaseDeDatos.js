@@ -80,6 +80,30 @@ class Database {
       throw { status: "FAILED", data: { error: "Registro no existe !" } };
     }
   };
+
+  //
+  encontrarPorObjeto = async (valueObject) => {
+    try {
+      const payload = await prisma[this.tabla].findFirst({
+        where: valueObject,
+      });
+      return payload;
+    } catch (error) {
+      throw { status: "FAILED", data: { error: error?.message || error } };
+    }
+  };
+
+  //
+  encontrarMuchosPorObjeto = async (valueObject) => {
+    try {
+      const payload = await prisma[this.tabla].findMany({
+        where: valueObject,
+      });
+      return payload;
+    } catch (error) {
+      throw { status: "FAILED", data: { error: error?.message || error } };
+    }
+  };
 }
 
 export { Database };

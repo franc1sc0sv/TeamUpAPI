@@ -12,7 +12,9 @@ const autentifiacion = (authorizedUsers) => {
         const tokenVerificado = jwt.verify(token, process.env.JWT_SECRET);
 
         //Verifico si el usuario si exista
-        const usuarioEncontradoPorId = await usuario.obtenerUno(tokenVerificado.id);
+        const usuarioEncontradoPorId = await usuario.obtenerUno(
+          tokenVerificado.id
+        );
 
         //Miro si el usuarioEncontradoPorId pertenece a los usuarios permitidos
         if (authorizedUsers.includes(usuarioEncontradoPorId.role)) {
@@ -31,7 +33,6 @@ const autentifiacion = (authorizedUsers) => {
         message: "No estas autentificado",
       });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({
         message: "Hubo un error de autentificacion",
       });
