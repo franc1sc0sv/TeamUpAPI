@@ -17,16 +17,7 @@ class UsuarioService extends Service {
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
 
-      const mappedData = {
-        nombre: data.nombre,
-        email: data.email,
-        password: data.password,
-        nivelAcademico: {
-          create: [{ id_nivelAcademico: data.id_nivelAcademico }],
-        },
-      };
-
-      const nuevoUsuario = this.database.crear(mappedData);
+      const nuevoUsuario = this.database.crear(data);
       return nuevoUsuario;
     } catch (error) {
       throw error;

@@ -19,7 +19,7 @@ const autentifiacion = (authorizedUsers) => {
         //Miro si el usuarioEncontradoPorId pertenece a los usuarios permitidos
         if (authorizedUsers.includes(usuarioEncontradoPorId.role)) {
           req.usuario = usuarioEncontradoPorId;
-
+          delete req.usuario.password;
           return next();
         }
 

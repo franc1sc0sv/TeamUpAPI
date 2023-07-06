@@ -76,7 +76,7 @@ class UsuarioController extends Controller {
       if (!payload) {
         return res
           .status(400)
-          .json({ status: "FAILED", data: { error: "El usuario ya existe" } });
+          .json({ status: "FAILED", data: { error: "El correo ya ha sido utilizado" } });
       }
 
       return res.status(201).json({ status: "OK", data: payload });
@@ -143,6 +143,9 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+  obtenerPerfil = async(req,res)=>{
+    return res.status(200).json({status: 'OK', data: req.usuario})
+  }
 }
 
 const usuarioControlador = new UsuarioController(

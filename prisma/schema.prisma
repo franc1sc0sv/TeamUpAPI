@@ -19,7 +19,7 @@ enum Rol {
 model NivelAcademico {
   id          Int                      @id @default(autoincrement())
   nivel       String
-  estudiantes UsuariosNivelAcademico[]
+  Usuarios    Usuarios[]
 }
 
 model TipoDeporte {
@@ -39,25 +39,18 @@ model PartidosEstado {
 // Tablas de datos
 
 model Usuarios {
-  id               Int                      @id @default(autoincrement())
-  nombre           String
-  email            String                   @unique
-  password         String
-  role             Rol                      @default(ESTUDIANTE)
-  nivelAcademico   UsuariosNivelAcademico[]
-  equiposLider     Equipos[]
-  equiposJugador   UsuariosEquipos[]
-  usuariosPartidos UsuariosPartidos[]
-  partidoMaestro   Partidos[]               @relation("partidosMaestro")
-}
+  id       Int    @id @default(autoincrement())
+  nombre   String
+  email    String @unique
+  password String
 
-model UsuariosNivelAcademico {
-  id                Int @id @default(autoincrement())
-  id_estudiante     Int
-  id_nivelAcademico Int
-
-  estudiante     Usuarios       @relation(fields: [id_estudiante], references: [id])
-  nivelAcademico NivelAcademico @relation(fields: [id_nivelAcademico], references: [id])
+  id_nivelAcademico      Int
+  nivelAcademico         NivelAcademico           @relation(fields: [id_nivelAcademico], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role                   Rol                      @default(ESTUDIANTE)
+  equiposLider           Equipos[]
+  equiposJugador         UsuariosEquipos[]
+  usuariosPartidos       UsuariosPartidos[]
+  partidoMaestro         Partidos[]               @relation("partidosMaestro")
 }
 
 model Deporte {
