@@ -167,30 +167,21 @@ class EquipoService extends Service {
       throw error;
     }
   };
+  obtenerUnEquipo = async ({ id, equiposUsuario }) => {
+    {
+      try {
+        const equipo = equiposUsuario.filter((equipo) => equipo.id === id);
 
-  obtenerEquiposDelUsuario = async (id) => {
-    try {
-      const mappedDataMiembro = {
-        id_usuarios: id,
-      };
+        if (!equipo?.length) {
+          return { error: "No perteneces al equipo" };
+        }
 
-      const mappedDataLider = {
-        id_lider: id,
-      };
-
-      const payloadMiembro = await usuariosEquipos.encontrarMuchosPorObjeto(
-        mappedDataMiembro
-      );
-      const payloadLider = await this.database.encontrarMuchosPorObjeto(
-        mappedDataLider
-      );
-
-      return { payloadMiembro, payloadLider };
-    } catch (error) {
-      throw error;
+        return { equipo };
+      } catch (error) {
+        throw error;
+      }
     }
   };
-  obtenerUnEquipo = async () => {};
   obtenerMiembrosEquipo = async () => {};
 }
 

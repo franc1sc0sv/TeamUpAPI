@@ -1,25 +1,17 @@
 import { equipo } from "../db/equipo.js";
-import { usuariosEquipos } from "../db/usuariosEquipos.js";
 
 export const esLiderOMiembroDeEquipo = async (req, res, next) => {
-  const idUsuario = parseInt(req.usuario.id);
+  const id = parseInt(req.usuario.id);
   try {
-    // Es miembro
-    const mappedDataMiembro = {
-      id_usuarios: idUsuario,
-    };
+    const payload = await equipo.obtenerEquiposDelUsuario(id);
 
-    // Es Lider
-    const mappedDataLider = {
-      id_lider: idUsuario,
-    };
-
-    const payloadMiembro = await usuariosEquipos.encontrarMuchosPorObjeto(
-      mappedDataMiembro
-    );
-    const payloadLider = await equipo.encontrarMuchosPorObjeto(mappedDataLider);
-
-    if (payloadMiembro || payloadLider) {
+    if (payload) {
+      const equipos = payload.map((equipo) =>
+        equipo.id_lider === id
+          ? { ...equipo, rango: "Lider" }
+          : { ...equipo, rango: "Miembro" }
+      );
+      req.equiposUsuario = equipos;
       return next();
     }
 

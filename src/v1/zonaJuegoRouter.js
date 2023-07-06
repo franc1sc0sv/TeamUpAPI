@@ -33,7 +33,7 @@ zonaJuegoRouter
     autentifiacion(__ROL__.COORDINADOR),
     zonaJuegoControlador.eliminarZonaJuego
   )
-  .put(
+  .patch(
     autentifiacion(__ROL__.COORDINADOR),
     upload.array("imagenes"),
     zonaJuegoControlador.actualizarZonaJuego

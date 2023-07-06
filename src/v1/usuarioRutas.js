@@ -9,7 +9,7 @@ usuarioRouter
   .route("/")
   .get(usuarioControlador.obtenerUsuarios)
   .post(usuarioControlador.crearCuentaEstudiante)
-  .put(
+  .patch(
     autentifiacion(__ROL__.TODOS),
     usuarioControlador.actualizarDatosUsuario
   );

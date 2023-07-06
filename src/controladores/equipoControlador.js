@@ -124,20 +124,37 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
-
   obtenerEquiposDelUsuario = async (req, res) => {
     try {
-      const { id } = req.usuario;
-      const payload = await this.service.obtenerEquiposDelUsuario(id);
+      const { equiposUsuario } = req;
+      return res.status(200).json({ status: "OK", data: equiposUsuario });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  };
+  //Falta que este devuelva los miembros del equipo
+  obtenerUnEquipo = async (req, res) => {
+    const id = parseInt(req.params.id);
+    const { equiposUsuario } = req;
+
+    try {
+      if (!id) {
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "id requerido" } });
+      }
+
+      const payload = await this.service.obtenerUnEquipo({
+        id,
+        equiposUsuario,
+      });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
     }
   };
-
-  obtenerUnEquipo = async (req, res) => {};
-  obtenerMiembrosEquipo = async (req, res) => {};
+  //Falta el controlador de eliminar miembros del grupo (Lider)
 }
 
 const equipoControlador = new EquipoController(
