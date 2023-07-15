@@ -88,7 +88,6 @@ class Controller {
           .status(400)
           .json({ status: "FAILED", data: { error: zodError } });
       }
-
       // Si ocurre cualquier otro tipo de error, se envía una respuesta con el código de estado 500 y el error original
       return res.status(500).json(error);
     }

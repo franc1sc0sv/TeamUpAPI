@@ -11,7 +11,7 @@ deporteRouter
   .post(autentifiacion(__ROL__.COORDINADOR), deporteControlador.crear);
 
 deporteRouter
-  .route("/")
+  .route("/:id")
   .get(deporteControlador.obtenerUno)
   .patch(autentifiacion(__ROL__.COORDINADOR), deporteControlador.actualizarUno)
   .delete(autentifiacion(__ROL__.COORDINADOR), deporteControlador.eliminarUno);
