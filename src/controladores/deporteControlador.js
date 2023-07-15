@@ -5,7 +5,9 @@ import {
   deporteEsquemaActualzar,
 } from "../esquemas/deporteEsquemas.js";
 
-class DeporteController extends Controller {}
+class DeporteController extends Controller {
+
+}
 
 const deporteControlador = new DeporteController(
   deporteEsquema,

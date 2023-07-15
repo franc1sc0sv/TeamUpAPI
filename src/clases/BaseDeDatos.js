@@ -1,9 +1,10 @@
 import { prisma } from "../config/db.js";
 
 class Database {
-  constructor(tabla) {
+  constructor(tabla, includes) {
     //Al instanciar un objeto necesito el nombre de la tabla para usarlo con prisma
     this.tabla = tabla;
+    this.includes = includes;
   }
 
   crear = async (data) => {
@@ -25,8 +26,18 @@ class Database {
   // Método para obtener todos los registros de la tabla especificada
   obtenerTodos = async () => {
     try {
+      let payload;
+
       // Se obtienen todos los objetos de la tabla
-      const payload = await prisma[this.tabla].findMany();
+      if (this.includes) {
+        payload = await prisma[this.tabla].findMany({
+          include: this.includes,
+        });
+
+        return payload;
+      }
+
+      payload = await prisma[this.tabla].findMany();
       return payload;
     } catch (error) {
       // Si hay un error al obtener los objetos, se lanza una excepción con un mensaje de error personalizado
@@ -38,9 +49,22 @@ class Database {
   obtenerUno = async (id) => {
     try {
       // Se busca un objeto en la tabla que coincida con el ID proporcionado
-      const payload = await prisma[this.tabla].findFirst({
+      let payload;
+      
+      // Se obtienen todos los objetos de la tabla
+      if (this.includes) {
+        payload = await prisma[this.tabla].findFirst({
+          where: { id: parseInt(id) },
+          include: this.includes,
+        });
+        return payload;
+      }
+
+      payload = await prisma[this.tabla].findFirst({
         where: { id: parseInt(id) },
       });
+
+
       return payload;
     } catch (error) {
       // Si hay un error al obtener el objeto, se lanza una excepción con un mensaje de error personalizado

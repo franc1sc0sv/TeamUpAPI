@@ -8,6 +8,7 @@ import { deporteRouter } from "./v1/deporteRutas.js";
 import { zonaJuegoRouter } from "./v1/zonaJuegoRouter.js";
 import { equipoRouter } from "./v1/equipoRutas.js";
 import nivelAcademicoRouter from "./v1/nivelAcademicoRutas.js";
+import tipoDeporteRouter from "./v1/tipoDeportesRutas.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(BASE_URL + "/deporte", deporteRouter);
 app.use(BASE_URL + "/zonaJuego", zonaJuegoRouter);
 app.use(BASE_URL + "/equipo", equipoRouter);
 app.use(BASE_URL + "/niveles-academicos", nivelAcademicoRouter) 
+app.use(BASE_URL + "/tipos-deportes", tipoDeporteRouter) 
 
 //Default route
 app.get("/", (req, res) => {
