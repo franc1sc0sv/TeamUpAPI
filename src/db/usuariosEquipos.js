@@ -20,6 +20,19 @@ class UsuariosEquiposDB extends Database {
       throw { status: "FAILED", data: { error: error?.message || error } };
     }
   };
+  eliminarMiembro = async ({ id_usuarios, id_equipo }) => {
+    try {
+      await prisma[this.tabla].delete({
+        where: {
+          id_equipo: parseInt(id_equipo),
+          id_usuarios: parseInt(id_usuarios),
+        },
+      });
+      return true;
+    } catch (error) {
+      throw { status: "FAILED", data: { error: error?.message || error } };
+    }
+  };
 }
 
 const usuariosEquipos = new UsuariosEquiposDB("UsuariosEquipos");

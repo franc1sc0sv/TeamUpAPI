@@ -17,9 +17,9 @@ enum Rol {
 }
 
 model NivelAcademico {
-  id          Int                      @id @default(autoincrement())
-  nivel       String
-  Usuarios    Usuarios[]
+  id       Int        @id @default(autoincrement())
+  nivel    String
+  Usuarios Usuarios[]
 }
 
 model TipoDeporte {
@@ -44,13 +44,13 @@ model Usuarios {
   email    String @unique
   password String
 
-  id_nivelAcademico      Int
-  nivelAcademico         NivelAcademico           @relation(fields: [id_nivelAcademico], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  role                   Rol                      @default(ESTUDIANTE)
-  equiposLider           Equipos[]
-  equiposJugador         UsuariosEquipos[]
-  usuariosPartidos       UsuariosPartidos[]
-  partidoMaestro         Partidos[]               @relation("partidosMaestro")
+  id_nivelAcademico Int
+  nivelAcademico    NivelAcademico     @relation(fields: [id_nivelAcademico], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role              Rol                @default(ESTUDIANTE)
+  equiposLider      Equipos[]
+  equiposJugador    UsuariosEquipos[]
+  usuariosPartidos  UsuariosPartidos[]
+  partidoMaestro    Partidos[]         @relation("partidosMaestro")
 }
 
 model Deporte {
@@ -74,6 +74,7 @@ model ZonaDejuego {
 
   deporte  Deporte               @relation(fields: [id_deporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
   imagenes ImagenesZonaDeJuego[]
+  Partidos Partidos[]
 }
 
 model ImagenesZonaDeJuego {
@@ -117,14 +118,15 @@ model Partidos {
   id_deporte          Int
   id_equipo_local     Int
   id_equipo_visitante Int
+  id_zona_juego       Int?
 
-  estado           PartidosEstado @relation(fields: [id_estado], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  usuarioMaestro   Usuarios?      @relation("partidosMaestro", fields: [id_usuarioMaestro], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  deporte          Deporte        @relation(fields: [id_deporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  equipo_local     Equipos        @relation("equipo_local", fields: [id_equipo_local], references: [id])
-  equipo_visitante Equipos        @relation("equipo_visitante", fields: [id_equipo_visitante], references: [id])
-
-  usuarios UsuariosPartidos[]
+  estado           PartidosEstado     @relation(fields: [id_estado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarioMaestro   Usuarios?          @relation("partidosMaestro", fields: [id_usuarioMaestro], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  deporte          Deporte            @relation(fields: [id_deporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  equipo_local     Equipos            @relation("equipo_local", fields: [id_equipo_local], references: [id])
+  equipo_visitante Equipos            @relation("equipo_visitante", fields: [id_equipo_visitante], references: [id])
+  usuarios         UsuariosPartidos[]
+  ZonaDejuego      ZonaDejuego?       @relation(fields: [id_zona_juego], references: [id])
 }
 
 model UsuariosPartidos {

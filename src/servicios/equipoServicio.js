@@ -182,7 +182,15 @@ class EquipoService extends Service {
       }
     }
   };
-  obtenerMiembrosEquipo = async () => {};
+  eliminarMiembro = async ({ id_equipo, data }) => {
+    try {
+      const { id_usuarios } = data;
+      await usuariosEquipos.eliminarMiembro({ id_equipo, id_usuarios });
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const equipoServicio = new EquipoService(equipo);

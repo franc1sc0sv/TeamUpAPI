@@ -32,9 +32,14 @@ const cambiarLiderEsquema = z.object({
   id_lider: z.string().regex(/^\d+$/).transform(Number),
 });
 
+const eliminarMiembro = z.object({
+  id_usuarios: z.string().regex(/^\d+$/).transform(Number),
+});
+
 export {
   crearEquipoEsquema,
   actualizarEquipoEsquema,
   unirseEquipoEsquema,
   cambiarLiderEsquema,
+  eliminarMiembro,
 };

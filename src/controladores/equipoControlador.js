@@ -7,6 +7,7 @@ import {
   actualizarEquipoEsquema,
   unirseEquipoEsquema,
   cambiarLiderEsquema,
+  eliminarMiembro,
 } from "../esquemas/equipoEsquemas.js";
 
 class EquipoController extends Controller {
@@ -132,7 +133,6 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
-  //Falta que este devuelva los miembros del equipo
   obtenerUnEquipo = async (req, res) => {
     const id = parseInt(req.params.id);
     const { equiposUsuario } = req;
@@ -155,6 +155,22 @@ class EquipoController extends Controller {
     }
   };
   //Falta el controlador de eliminar miembros del grupo (Lider)
+  eliminarMiembro = async (req, res) => {
+    const { equiposUsuario } = req;
+    const rawdata = req.body;
+
+    try {
+      const data = eliminarMiembro.parse(rawdata);
+      const id_equipo = equiposUsuario.id;
+      await this.service.eliminarMiembro({ id_equipo, data });
+      return res
+        .status(200)
+        .json({ status: "OK", data: "Eliminado con exito" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  };
 }
 
 const equipoControlador = new EquipoController(

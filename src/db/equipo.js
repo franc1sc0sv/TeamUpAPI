@@ -8,6 +8,9 @@ class EquiposDB extends Database {
         where: {
           OR: [{ id_lider: id }, { usuarios: { some: { id_usuarios: id } } }],
         },
+        include: {
+          usuarios: true,
+        },
       });
       return payload;
     } catch (error) {

@@ -54,4 +54,9 @@ equipoRouter
     esLiderDeEquipo,
     upload.single("avatar"),
     equipoControlador.actualizarEquipo
+  )
+  .delete(
+    autentifiacion(__ROL__.ESTUDIANTE),
+    esLiderDeEquipo,
+    equipoControlador.eliminarMiembro
   );
