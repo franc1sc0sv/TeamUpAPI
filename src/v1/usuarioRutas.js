@@ -7,6 +7,7 @@ const usuarioRouter = Router();
 
 usuarioRouter
   .route("/maestro")
+  .get(autentifiacion(__ROL__.COORDINADOR),usuarioControlador.obtenerMaestros)
   .post(
     autentifiacion(__ROL__.COORDINADOR),
     usuarioControlador.crearCuentaMaestro

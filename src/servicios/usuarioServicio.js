@@ -33,7 +33,7 @@ class UsuarioService extends Service {
 
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
-      data.role = "MAESTRO"
+      data.role = "MAESTRO";
       const nuevoUsuario = this.database.crear(data);
 
       return nuevoUsuario;
@@ -124,6 +124,17 @@ class UsuarioService extends Service {
       };
 
       return mappedData;
+    } catch (error) {
+      throw error;
+    }
+  };
+  obtenerMaestros = async () => {
+    try {
+      
+      const payload = await usuario.obtenerMaestros();
+      
+      return payload;
+
     } catch (error) {
       throw error;
     }
