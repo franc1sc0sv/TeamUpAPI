@@ -19,7 +19,7 @@ zonaJuegoRouter
   )
   .post(
     autentifiacion(__ROL__.COORDINADOR),
-    upload.array("imagenes"),
+    upload.array("imagenes[]"), //Para que funque en axios
     zonaJuegoControlador.crearZonaJuego
   );
 

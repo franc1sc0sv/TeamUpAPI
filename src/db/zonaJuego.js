@@ -6,7 +6,7 @@ class ZonaJuegoDB extends Database {
     try {
       const payload = await prisma[this.tabla].findFirst({
         where: { id: parseInt(id) },
-        include: { imagenes: true },
+        include: { imagenes: true, deporte: true },
       });
       return payload;
     } catch (error) {
@@ -16,7 +16,7 @@ class ZonaJuegoDB extends Database {
   obtenerZonasJuegos = async () => {
     try {
       const payload = await prisma[this.tabla].findMany({
-        include: { imagenes: true },
+        include: { imagenes: true, deporte: true },
       });
       return payload;
     } catch (error) {
