@@ -7,6 +7,22 @@ class Database {
     this.includes = includes;
   }
 
+  crearMuchos = async (data) => {
+    try {
+      //Payload es tipo la carga de datos, asi que de los datos que se crearon los almaceno en una constante
+      const payload = await prisma[this.tabla].createMany({ data });
+
+      //La funcion retorna esa carga de datos, osea el "objeto" creado
+      //Objeto puede ser "deporte", "zona de juego", "maestro", etc
+
+      //Retorno esa carga de datos para usarlo en el
+      return payload;
+    } catch (error) {
+      //Si hay un error con prisma en ves mostrar el de por defecto muestro este para la api
+      throw { status: "FAILED", data: { error: error?.message || error } };
+    }
+  };
+
   crear = async (data) => {
     try {
       //Payload es tipo la carga de datos, asi que de los datos que se crearon los almaceno en una constante

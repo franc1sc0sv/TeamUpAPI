@@ -146,6 +146,16 @@ class UsuarioController extends Controller {
   obtenerPerfil = async(req,res)=>{
     return res.status(200).json({status: 'OK', data: req.usuario})
   }
+  obtenerMaestros = async(req,res)=>{
+    try {
+      const payload = await usuarioServicio.obtenerMaestros();
+      return res.status(200).json({ status: "OK", data: payload });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  
 }
 
 const usuarioControlador = new UsuarioController(

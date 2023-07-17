@@ -36,7 +36,7 @@ equipoRouter
 
 equipoRouter
   .route("/cambiarLider/:id")
-  .put(
+  .patch(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,
     equipoControlador.cambiarLider
@@ -49,9 +49,14 @@ equipoRouter
     esLiderOMiembroDeEquipo,
     equipoControlador.obtenerUnEquipo
   )
-  .put(
+  .patch(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,
     upload.single("avatar"),
     equipoControlador.actualizarEquipo
+  )
+  .delete(
+    autentifiacion(__ROL__.ESTUDIANTE),
+    esLiderDeEquipo,
+    equipoControlador.eliminarMiembro
   );

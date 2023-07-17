@@ -13,5 +13,5 @@ deporteRouter
 deporteRouter
   .route("/:id")
   .get(deporteControlador.obtenerUno)
-  .put(autentifiacion(__ROL__.COORDINADOR), deporteControlador.actualizarUno)
+  .patch(autentifiacion(__ROL__.COORDINADOR), deporteControlador.actualizarUno)
   .delete(autentifiacion(__ROL__.COORDINADOR), deporteControlador.eliminarUno);
