@@ -33,18 +33,9 @@ class UsuarioService extends Service {
 
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
+      data.role = "MAESTRO";
+      const nuevoUsuario = this.database.crear(data);
 
-      //Mapear la data
-      const mappedData = {
-        nombre: data.nombre,
-        email: data.email,
-        password: data.password,
-        role: "MAESTRO",
-        nivelAcademico: {
-          create: [{ id_nivelAcademico: data.id_nivelAcademico }],
-        },
-      };
-      const nuevoUsuario = this.database.crear(mappedData);
       return nuevoUsuario;
     } catch (error) {
       throw error;
@@ -105,16 +96,8 @@ class UsuarioService extends Service {
   obtenerUsuarios = async () => {
     try {
       const payload = await this.database.obtenerUsuarios();
-      const mappedData = payload.map((data) => {
-        return {
-          nombre: data.nombre,
-          email: data.email,
-          role: data.role,
-          nivelAcademico: data.nivelAcademico[0].nivelAcademico.nivel,
-        };
-      });
-
-      return mappedData;
+      
+      return payload;
     } catch (error) {
       throw error;
     }
@@ -125,14 +108,19 @@ class UsuarioService extends Service {
 
       if (!payload) return { error: "El usuario no existe" };
 
-      const mappedData = {
-        nombre: payload.nombre,
-        email: payload.email,
-        role: payload.role,
-        nivelAcademico: payload.nivelAcademico[0].nivelAcademico.nivel,
-      };
 
-      return mappedData;
+      return payload;
+    } catch (error) {
+      throw error;
+    }
+  };
+  obtenerMaestros = async () => {
+    try {
+      
+      const payload = await usuario.obtenerMaestros();
+      
+      return payload;
+
     } catch (error) {
       throw error;
     }

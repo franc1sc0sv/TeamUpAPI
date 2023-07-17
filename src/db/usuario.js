@@ -14,11 +14,9 @@ class UsuarioDB extends Database {
   };
   obtenerUsuarios = async () => {
     try {
-      const payload = await prisma[this.tabla].findMany({
+      const payload = await prisma.usuarios.findMany({
         include: {
-          nivelAcademico: {
-            select: { nivelAcademico: true },
-          },
+          nivelAcademico: true,
         },
       });
       return payload;
@@ -28,12 +26,21 @@ class UsuarioDB extends Database {
   };
   obtenerUnUsuario = async (id) => {
     try {
-      const payload = await prisma[this.tabla].findFirst({
+      const payload = await prisma.usuarios.findFirst({
         where: { id: parseInt(id) },
+        include: { nivelAcademico: true },
+      });
+      return payload;
+    } catch (error) {
+      throw { status: "FAILED", data: { error: error?.message || error } };
+    }
+  };
+  obtenerMaestros = async () => {
+    try {
+      const payload = await prisma.usuarios.findMany({
+        where: {role: 'MAESTRO'},
         include: {
-          nivelAcademico: {
-            select: { nivelAcademico: true },
-          },
+          nivelAcademico: true,
         },
       });
       return payload;
