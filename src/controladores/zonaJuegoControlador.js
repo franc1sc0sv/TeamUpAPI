@@ -41,7 +41,7 @@ class ZonaJuegoController extends Controller {
       }
       const payload = await this.service.obtenerUnaZonaJuego(id);
 
-      if (!payload?.length) {
+      if (!payload) {
         return res.status(200).json({
           status: "FAILED",
           data: { error: "La zona de juego no existe" },
@@ -93,11 +93,6 @@ class ZonaJuegoController extends Controller {
           .json({ status: "FAILED", data: { error: "ID requerido" } });
       }
 
-      if (!files?.length) {
-        return res
-          .status(400)
-          .json({ status: "FAILED", data: { error: "Imagenes requeridas" } });
-      }
       const payload = await this.service.actualizarZonaJuego({
         data,
         files,
@@ -105,6 +100,7 @@ class ZonaJuegoController extends Controller {
       });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
+      console.log(error);
       if (error instanceof ZodError) {
         const zodError = mostrarZodError(error);
         return res

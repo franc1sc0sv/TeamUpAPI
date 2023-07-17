@@ -76,31 +76,26 @@ class ZonaJuegoService extends Service {
   actualizarZonaJuego = async ({ data, files, id }) => {
     try {
       const zonaJuego = await this.database.obtenerUnaZonaJuego(id);
-      if (!zonaJuego) return { error: "Zona de juego no existe" };
+      
       const { imagenes } = zonaJuego;
+      const imagen_eliminadas = data.imagen_eliminadas ?? [];
+
+      if (!zonaJuego) return { error: "Zona de juego no existe" };
 
       //Las que se van eliminar
-      const oldImages = [...imagenes];
-      // Las que se van insertar
-      const newImages = [...files];
+      const deletedImages = imagenes.filter(imagen_zona => imagen_eliminadas.includes(imagen_zona.id))
+      const imagenesRestantes =  imagenes.filter(imagen_zona => !imagen_eliminadas.includes(imagen_zona.id))
 
-      /////// AQUI VAN IR LAS IMAGENES QUE SE VAN ELIMINAR ///////
-
-      //Las imagenes que se van eliminar es decir las imagenes viejas que no estan en las nuevas
-      const deletedImages = oldImages.filter((oldImage) => {
-        const imagen_url = oldImage.imagen_url.split("/")[2];
-        return !newImages.some((newImage) => {
-          const { originalname } = newImage;
-          return imagen_url.includes(originalname);
-        });
-      });
-
-      // //Eliminarla de la base de datos
+      if(imagenesRestantes+files.length <= 0){
+        throw {status: 'FAILED', error: "Necesitas almenos una imagen !"}
+      };
+   
       deletedImages.forEach(async (imagen) => {
         const { id } = imagen;
         await imagesZonaJuegos.eliminarUno(id);
       });
-      // //Eliminarla de los directorios
+
+
       deletedImages.forEach((imagen) => {
         const { imagen_url } = imagen;
         fs.unlink(imagen_url, (err) => {
@@ -111,32 +106,14 @@ class ZonaJuegoService extends Service {
         });
       });
 
-      /////// AQUI VAN IR LAS IMAGENES QUE SE VAN ACTUALIZAR ///////
-
-      //Las imagenes que se conservan es decir las que siguen en las nuevas imagenes
-      const sameImages = oldImages.filter((oldImage) => {
-        const imagen_url = oldImage.imagen_url.split("/")[2];
-        return newImages.some((newImage) => {
-          const { originalname } = newImage;
-          return imagen_url.includes(originalname);
-        });
-      });
-
-      // Las imagenes que no existen en la base de datos
-      const newImagesToKeep = newImages.filter((newImage) => {
-        const { originalname } = newImage;
-        return !sameImages.some((sameImage) => {
-          const imagen_url = sameImage.imagen_url.split("/")[2];
-          return imagen_url.includes(originalname);
-        });
-      });
+   
 
       //Formateando la data
       const mappedData = { ...data };
       mappedData.imagenes = {};
       mappedData.imagenes.create = [];
       // Guardando imagenes
-      for (const image of newImagesToKeep) {
+      for (const image of files) {
         const URL_IMAGES =
           BASE_URL_IMAGES + Date.now() + "-" + image.originalname;
 
@@ -144,6 +121,8 @@ class ZonaJuegoService extends Service {
 
         mappedData.imagenes.create.push({ imagen_url: URL_IMAGES });
       }
+      
+      delete mappedData.imagen_eliminadas;
 
       const payload = await this.database.actualizarUno(mappedData, id);
       return payload;

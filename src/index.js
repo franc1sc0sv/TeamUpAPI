@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import bcrypt from "bcrypt"
 
 import { PrismaClient } from "@prisma/client";
 
@@ -15,6 +16,7 @@ import tipoDeporteRouter from "./v1/tipoDeportesRutas.js";
 import {
   __ESTADOS_PARTIDOS__,
   __NIVELES_ACADEMICOS__,
+  __TIPOS_DEPORTES__,
 } from "./constantes/datosEstaticosDB.js";
 
 dotenv.config();
@@ -74,6 +76,28 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
         data: arrayNivelesAcacemicos,
       });
     }
+
+    const tiposDeportes = await prisma.tipoDeporte.findFirst();
+
+    if (!tiposDeportes) {
+      console.log("Tipos deportes creados !");
+      await prisma.tipoDeporte.createMany({
+        data: __TIPOS_DEPORTES__,
+      });
+    }
+
+    const coordinador = await prisma.usuarios.findFirst({where:{role: 'COORDINADOR'}})
+    if(!coordinador){
+      const salt = await bcrypt.genSalt(5);
+      const password = await bcrypt.hash("123123123", salt);
+      await prisma.usuarios.create({data: {
+        email: 'coordinador@cdb.edu.sv',
+        password,
+        id_nivelAcademico: 1,
+        nombre: 'juan',
+      }})
+    }
+
   } catch (error) {
     throw { status: "FAILED", data: { error: error?.message || error } };
   }

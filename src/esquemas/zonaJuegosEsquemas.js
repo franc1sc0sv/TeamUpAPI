@@ -13,6 +13,8 @@ const zonaJuegosEsquemasActualizar = z.object({
     .nonempty("El nombre no debe estar vacio")
     .optional(),
   id_deporte: z.string().regex(/^\d+$/).transform(Number).optional(),
+
+  imagen_eliminadas: z.array(z.string()).transform((value) => value.map(Number)).or(z.array(z.number())).optional()
 });
 
 export { zonaJuegosEsquemas, zonaJuegosEsquemasActualizar };

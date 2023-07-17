@@ -58,3 +58,15 @@ export const __NIVELES_ACADEMICOS__ = {
     nivel: "Bachillerato",
   },
 };
+
+export const __TIPOS_DEPORTES__ = [
+  {
+      "nombre": "Cancha Regulada",
+      "descripcion": "Para solicitar un partido de este tipo de deportes deben pasar por coordinacion y un maestro debera cuidarlos"
+  },
+  {
+  
+      "nombre": "No Regulado",
+      "descripcion": "No hay personas que supervisen los partidos de estos deportes y las solicitudes no pasan por coordinacion ni por los maestros"
+  }
+]
