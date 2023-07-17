@@ -19,7 +19,7 @@ zonaJuegoRouter
   )
   .post(
     autentifiacion(__ROL__.COORDINADOR),
-    upload.array("imagenes"),
+    upload.array("imagenes[]"),
     zonaJuegoControlador.crearZonaJuego
   );
 
@@ -35,6 +35,6 @@ zonaJuegoRouter
   )
   .patch(
     autentifiacion(__ROL__.COORDINADOR),
-    upload.array("imagenes"),
+    upload.array("imagenes[]"),
     zonaJuegoControlador.actualizarZonaJuego
   );

@@ -4,6 +4,10 @@ const crearEquipoEsquema = z.object({
   nombre: z
     .string({ required_error: "El nombre debe ser un string" })
     .nonempty("El nombre no debe estar vacio"),
+  password_access: z
+    .string({ required_error: "La contraseña debe ser un string" })
+    .nonempty("La contraseña no debe estar vacio")
+    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
 });
 
 const unirseEquipoEsquema = z.object({
@@ -21,7 +25,12 @@ const actualizarEquipoEsquema = z.object({
     .string({ required_error: "El nombre debe ser un string" })
     .nonempty("El nombre no debe estar vacio")
     .optional(),
-  password_access: z
+  old_password_access: z
+    .string({ required_error: "La contraseña debe ser un string" })
+    .nonempty("La contraseña no debe estar vacio")
+    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" })
+    .optional(),
+  new_password_access: z
     .string({ required_error: "La contraseña debe ser un string" })
     .nonempty("La contraseña no debe estar vacio")
     .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" })

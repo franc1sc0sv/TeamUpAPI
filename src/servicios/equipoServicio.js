@@ -8,29 +8,14 @@ import sharp from "sharp";
 const BASE_URL_IMAGES = "uploads/avatars/";
 const DEFAULT_IMAGE_URL = "uploads/default/defaultAvatar.png";
 
-const generarContrasena = () => {
-  const caracteres =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
-  let contrasena = "";
-
-  for (let i = 0; i < 8; i++) {
-    const indice = Math.floor(Math.random() * caracteres.length);
-    contrasena += caracteres.charAt(indice);
-  }
-
-  return contrasena;
-};
-
 class EquipoService extends Service {
   crearEquipo = async (data, usuario) => {
     try {
-      const { nombre } = data;
+      const { nombre, password_access } = data;
       const equipo = await this.database.encontrarPorObjeto({
         nombre: nombre,
       });
       if (equipo) return { error: "El nombre actualmente esta ocupado" };
-
-      const password_access = nombre + "-" + generarContrasena();
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password_access, salt);
@@ -173,10 +158,10 @@ class EquipoService extends Service {
         const equipo = equiposUsuario.filter((equipo) => equipo.id === id);
 
         if (!equipo?.length) {
-          return { error: "No perteneces al equipo" };
+          return { error: "No perteneces al equipo o no existe" };
         }
 
-        return { equipo };
+        return equipo[0];
       } catch (error) {
         throw error;
       }
