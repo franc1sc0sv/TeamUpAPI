@@ -86,16 +86,20 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
       });
     }
 
-    const coordinador = await prisma.usuarios.findFirst({where:{role: 'COORDINADOR'}})
-    if(!coordinador){
+    const coordinador = await prisma.usuarios.findFirst({ where: { role: 'COORDINADOR' } })
+    if (!coordinador) {
       const salt = await bcrypt.genSalt(5);
       const password = await bcrypt.hash("123123123", salt);
-      await prisma.usuarios.create({data: {
-        email: 'coordinador@cdb.edu.sv',
-        password,
-        id_nivelAcademico: 1,
-        nombre: 'juan',
-      }})
+
+      await prisma.usuarios.create({
+        data: {
+          email: 'coordinador@cdb.edu.sv',
+          password,
+          id_nivelAcademico: 1,
+          nombre: 'Juan',
+          role: "COORDINADOR"
+        }
+      })
     }
 
   } catch (error) {
