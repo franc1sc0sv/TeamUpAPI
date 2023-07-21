@@ -10,6 +10,24 @@ import {
   eliminarMiembro,
 } from "../esquemas/equipoEsquemas.js";
 
+function eliminarPropiedadesVacias(objeto) {
+  const nuevoObjeto = {};
+
+  for (let propiedad in objeto) {
+    if (
+      objeto[propiedad] !== null &&
+      objeto[propiedad] !== undefined &&
+      objeto[propiedad] !== ""
+    ) {
+      nuevoObjeto[propiedad] = objeto[propiedad];
+    }
+  }
+  delete nuevoObjeto.id;
+  const estaVacio = Object.entries(nuevoObjeto).length === 0;
+
+  return !estaVacio ? nuevoObjeto : false;
+}
+
 class EquipoController extends Controller {
   crearEquipo = async (req, res) => {
     const rawdata = req.body;
@@ -98,20 +116,58 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
-  actualizarEquipo = async (req, res) => {
-    const { file } = req;
+  actualizarEquipoDatos = async (req, res) => {
     const rawdata = req.body;
+    const id = req.body.id;
+    try {
+      if (!id) {
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "id requerido" } });
+      }
+      const emptyDataFilter = eliminarPropiedadesVacias(rawdata);
+
+      if (!emptyDataFilter) {
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "Error con los datos" } });
+      }
+
+      const data = this.zodUpdateSchema.parse(emptyDataFilter);
+      const payload = await this.service.actualizarEquipoDatos({
+        data,
+        id,
+      });
+
+      if (payload.error) {
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: payload.error } });
+      }
+      return res.status(200).json({ status: "OK", data: payload });
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof ZodError) {
+        const zodError = mostrarZodError(error);
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: zodError } });
+      }
+      return res.status(500).json(error);
+    }
+  };
+  actualizarEquipoAvatar = async (req, res) => {
+    const { file } = req;
     const id = req.params.id;
     try {
-      const data = this.zodUpdateSchema.parse(rawdata);
-
       if (!id) {
         return res
           .status(400)
           .json({ status: "FAILED", data: { error: "id requerido" } });
       }
 
-      const payload = await this.service.actualizarEquipo({ data, file, id });
+      const payload = await this.service.actualizarEquipoAvatar({ file, id });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
       console.log(error);
@@ -154,7 +210,6 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
-  //Falta el controlador de eliminar miembros del grupo (Lider)
   eliminarMiembro = async (req, res) => {
     const { equiposUsuario } = req;
     const rawdata = req.body;

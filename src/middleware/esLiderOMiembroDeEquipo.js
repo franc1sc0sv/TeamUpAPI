@@ -3,6 +3,12 @@ import { equipo } from "../db/equipo.js";
 export const esLiderOMiembroDeEquipo = async (req, res, next) => {
   const id = parseInt(req.usuario.id);
   try {
+    if (!id) {
+      return res
+        .status(400)
+        .json({ status: "FAILED", data: { error: "id requerido" } });
+    }
+
     const payload = await equipo.obtenerEquiposDelUsuario(id);
 
     if (payload) {

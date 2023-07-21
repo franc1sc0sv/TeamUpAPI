@@ -24,17 +24,20 @@ const autentifiacion = (authorizedUsers) => {
         }
 
         return res.status(401).json({
-          message: "Acceso no permitido",
+          status: "ACCESS DENIED",
+          data: { message: "Acceso no permitido" },
         });
       }
 
       //Si no entra en el if, no hay token de autentificacion
-      return res.status(400).json({
-        message: "No estas autentificado",
+      return res.status(401).json({
+        status: "ACCESS DENIED",
+        data: { message: "Acceso no permitido" },
       });
     } catch (error) {
       return res.status(400).json({
-        message: "Hubo un error de autentificacion",
+        status: "ACCESS DENIED",
+        data: { message: "Hubo un error de autentificacion" },
       });
     }
   };

@@ -61,7 +61,7 @@ class EquipoService extends Service {
       const esMiembro = await usuariosEquipos.encontrarPorObjeto(mappedData);
 
       if (esMiembro)
-        return { error: "Ya perteneces a este equipo(eres miembro)" };
+        return { error: "Ya perteneces a este equipo (eres miembro)" };
 
       if (equipo.id_lider === usuario.id)
         return { error: "Ya perteneces a este equipo (eres lider)" };
@@ -111,15 +111,39 @@ class EquipoService extends Service {
       throw error;
     }
   };
-  actualizarEquipo = async ({ data, file, id }) => {
+  actualizarEquipoDatos = async ({ data, id }) => {
     try {
+      console.log(id);
       const mappedData = { ...data };
 
-      if (data.password_access) {
+      if (mappedData.new_password_access || mappedData.old_password_access) {
+        const { new_password_access, old_password_access } = mappedData;
+
+        if (new_password_access !== old_password_access) {
+          return { error: "Las contraseñas no coinciden" };
+        }
+
         const salt = await bcrypt.genSalt(10);
-        const newHasedPassword = await bcrypt.hash(data.password_access, salt);
+        const newHasedPassword = await bcrypt.hash(
+          mappedData.new_password_access,
+          salt
+        );
+
+        delete mappedData.new_password_access;
+        delete mappedData.old_password_access;
+
         mappedData.password_access = newHasedPassword;
       }
+
+      const payload = await this.database.actualizarUno(mappedData, id);
+      return payload;
+    } catch (error) {
+      throw error;
+    }
+  };
+  actualizarEquipoAvatar = async ({ file, id }) => {
+    try {
+      const mappedData = { ...data };
 
       if (file) {
         const equipo = await this.database.obtenerUno(id);

@@ -49,12 +49,31 @@ equipoRouter
     esLiderOMiembroDeEquipo,
     equipoControlador.obtenerUnEquipo
   )
+  .delete(
+    autentifiacion(__ROL__.ESTUDIANTE),
+    esLiderDeEquipo,
+    equipoControlador.eliminarUno
+  );
+
+equipoRouter
+  .route("/actualizarDatos/:id")
+  .patch(
+    autentifiacion(__ROL__.ESTUDIANTE),
+    esLiderDeEquipo,
+    equipoControlador.actualizarEquipoDatos
+  );
+
+equipoRouter
+  .route("/actualizarAvatar/:id")
   .patch(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,
     upload.single("avatar"),
-    equipoControlador.actualizarEquipo
-  )
+    equipoControlador.actualizarEquipoAvatar
+  );
+
+equipoRouter
+  .route("/eliminarMiembro/:id")
   .delete(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,

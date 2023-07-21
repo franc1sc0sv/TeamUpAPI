@@ -9,7 +9,23 @@ class EquiposDB extends Database {
           OR: [{ id_lider: id }, { usuarios: { some: { id_usuarios: id } } }],
         },
         include: {
-          usuarios: true,
+          lider: {
+            select: {
+              id: true,
+              nombre: true,
+            },
+          },
+          usuarios: {
+            select: {
+              id_usuarios: true,
+              usuarios: {
+                select: {
+                  id: true,
+                  nombre: true,
+                },
+              },
+            },
+          },
         },
       });
       return payload;
