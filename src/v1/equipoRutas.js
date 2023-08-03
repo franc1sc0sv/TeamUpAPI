@@ -74,7 +74,7 @@ equipoRouter
 
 equipoRouter
   .route("/eliminarMiembro/:id")
-  .delete(
+  .patch(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,
     equipoControlador.eliminarMiembro

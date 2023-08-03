@@ -167,6 +167,12 @@ class EquipoController extends Controller {
           .json({ status: "FAILED", data: { error: "id requerido" } });
       }
 
+      if (!file) {
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "imagen requerida" } });
+      }
+
       const payload = await this.service.actualizarEquipoAvatar({ file, id });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
@@ -211,12 +217,11 @@ class EquipoController extends Controller {
     }
   };
   eliminarMiembro = async (req, res) => {
-    const { equiposUsuario } = req;
+    const { usuarioEquipo } = req;
     const rawdata = req.body;
-
     try {
       const data = eliminarMiembro.parse(rawdata);
-      const id_equipo = equiposUsuario.id;
+      const id_equipo = usuarioEquipo.id;
       await this.service.eliminarMiembro({ id_equipo, data });
       return res
         .status(200)

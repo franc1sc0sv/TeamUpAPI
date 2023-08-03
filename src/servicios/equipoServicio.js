@@ -113,21 +113,25 @@ class EquipoService extends Service {
   };
   actualizarEquipoDatos = async ({ data, id }) => {
     try {
-      console.log(id);
       const mappedData = { ...data };
 
       if (mappedData.new_password_access || mappedData.old_password_access) {
         const { new_password_access, old_password_access } = mappedData;
 
-        if (new_password_access !== old_password_access) {
+        //Contraseña original del equipo
+        const { password_access } = await this.database.obtenerUno(id);
+
+        const contraseñaValida = await bcrypt.compare(
+          old_password_access,
+          password_access
+        );
+
+        if (!contraseñaValida) {
           return { error: "Las contraseñas no coinciden" };
         }
 
         const salt = await bcrypt.genSalt(10);
-        const newHasedPassword = await bcrypt.hash(
-          mappedData.new_password_access,
-          salt
-        );
+        const newHasedPassword = await bcrypt.hash(new_password_access, salt);
 
         delete mappedData.new_password_access;
         delete mappedData.old_password_access;
@@ -143,32 +147,24 @@ class EquipoService extends Service {
   };
   actualizarEquipoAvatar = async ({ file, id }) => {
     try {
-      const mappedData = { ...data };
+      const mappedData = {};
+      const equipo = await this.database.obtenerUno(id);
+      const { avatar_url } = equipo;
 
-      if (file) {
-        const equipo = await this.database.obtenerUno(id);
-        const { avatar_url } = equipo;
-        // Como hay que eliminar la imagen anterior (si no es la default)
-        if (
-          avatar_url !== DEFAULT_IMAGE_URL &&
-          !avatar_url.includes(file.originalname)
-        ) {
-          // Hay que borrar la imagen anterior
-          fs.unlink(avatar_url, (err) => {
-            if (err) {
-              console.error(err);
-              return { error: "Error al eliminar las imagenes" };
-            }
-          });
-        }
-
-        if (!avatar_url.includes(file.originalname)) {
-          const URL_IMAGEN =
-            BASE_URL_IMAGES + Date.now() + "-" + file.originalname;
-          await sharp(file.buffer).resize(180, 180).toFile(URL_IMAGEN);
-          mappedData.avatar_url = URL_IMAGEN;
-        }
+      // Como hay que eliminar la imagen anterior (si no es la default)
+      if (avatar_url !== DEFAULT_IMAGE_URL) {
+        // Hay que borrar la imagen anterior
+        fs.unlink(avatar_url, (err) => {
+          if (err) {
+            console.error(err);
+            return { error: "Error al eliminar las imagenes" };
+          }
+        });
       }
+
+      const URL_IMAGEN = BASE_URL_IMAGES + Date.now() + "-" + file.originalname;
+      await sharp(file.buffer).resize(180, 180).toFile(URL_IMAGEN);
+      mappedData.avatar_url = URL_IMAGEN;
 
       const payload = await this.database.actualizarUno(mappedData, id);
       return payload;

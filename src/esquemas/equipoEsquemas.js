@@ -38,11 +38,11 @@ const actualizarEquipoEsquema = z.object({
 });
 
 const cambiarLiderEsquema = z.object({
-  id_lider: z.string().regex(/^\d+$/).transform(Number),
+  id_lider: z.number(),
 });
 
 const eliminarMiembro = z.object({
-  id_usuarios: z.string().regex(/^\d+$/).transform(Number),
+  id_usuarios: z.number(),
 });
 
 export {

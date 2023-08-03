@@ -1,10 +1,10 @@
 import { Database } from "../clases/BaseDeDatos.js";
+import { prisma } from "../config/db.js";
 
 class UsuariosEquiposDB extends Database {
   obtenerEquiposDelUsuario = async (data) => {
     try {
       const id = parseInt(data);
-      //id(usuario)
       const payload = await prisma[this.tabla].findFirst({
         where: {
           usuariosPartidos: {
@@ -22,10 +22,10 @@ class UsuariosEquiposDB extends Database {
   };
   eliminarMiembro = async ({ id_usuarios, id_equipo }) => {
     try {
-      await prisma[this.tabla].delete({
+      await prisma[this.tabla].deleteMany({
         where: {
-          id_equipo: parseInt(id_equipo),
-          id_usuarios: parseInt(id_usuarios),
+          id_equipo,
+          id_usuarios,
         },
       });
       return true;

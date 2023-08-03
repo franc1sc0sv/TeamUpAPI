@@ -3,4 +3,6 @@ node_modules
 # Keep environment variables out of version control
 .env
 # Keep images out of version control
+uploads/avatars/*
 uploads/zonaJuegos/*
+!uploads/default/

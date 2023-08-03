@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 
 import { PrismaClient } from "@prisma/client";
 
@@ -71,7 +71,7 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
     const isNivelesAcademicos = await prisma.nivelAcademico.findFirst();
 
     if (!isNivelesAcademicos) {
-      console.log("Nivelea academicos creados !");
+      console.log("Niveles academicos creados !");
       await prisma.nivelAcademico.createMany({
         data: arrayNivelesAcacemicos,
       });
@@ -86,22 +86,24 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
       });
     }
 
-    const coordinador = await prisma.usuarios.findFirst({ where: { role: 'COORDINADOR' } })
+    const coordinador = await prisma.usuarios.findFirst({
+      where: { role: "COORDINADOR" },
+    });
     if (!coordinador) {
+      console.log("Coordinador creado !");
       const salt = await bcrypt.genSalt(5);
       const password = await bcrypt.hash("123123123", salt);
 
       await prisma.usuarios.create({
         data: {
-          email: 'coordinador@cdb.edu.sv',
+          email: "coordinador@cdb.edu.sv",
           password,
           id_nivelAcademico: 1,
-          nombre: 'Juan',
-          role: "COORDINADOR"
-        }
-      })
+          nombre: "Juan",
+          role: "COORDINADOR",
+        },
+      });
     }
-
   } catch (error) {
     throw { status: "FAILED", data: { error: error?.message || error } };
   }
