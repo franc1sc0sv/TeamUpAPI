@@ -76,25 +76,28 @@ class ZonaJuegoService extends Service {
   actualizarZonaJuego = async ({ data, files, id }) => {
     try {
       const zonaJuego = await this.database.obtenerUnaZonaJuego(id);
-      
+
       const { imagenes } = zonaJuego;
       const imagen_eliminadas = data.imagen_eliminadas ?? [];
 
       if (!zonaJuego) return { error: "Zona de juego no existe" };
 
       //Las que se van eliminar
-      const deletedImages = imagenes.filter(imagen_zona => imagen_eliminadas.includes(imagen_zona.id))
-      const imagenesRestantes =  imagenes.filter(imagen_zona => !imagen_eliminadas.includes(imagen_zona.id))
+      const deletedImages = imagenes.filter((imagen_zona) =>
+        imagen_eliminadas.includes(imagen_zona.id)
+      );
+      const imagenesRestantes = imagenes.filter(
+        (imagen_zona) => !imagen_eliminadas.includes(imagen_zona.id)
+      );
 
-      if(imagenesRestantes+files.length <= 0){
-        throw {status: 'FAILED', error: "Necesitas almenos una imagen !"}
-      };
-   
+      if (imagenesRestantes + files.length <= 0) {
+        throw { status: "FAILED", error: "Necesitas almenos una imagen !" };
+      }
+
       deletedImages.forEach(async (imagen) => {
         const { id } = imagen;
         await imagesZonaJuegos.eliminarUno(id);
       });
-
 
       deletedImages.forEach((imagen) => {
         const { imagen_url } = imagen;
@@ -105,8 +108,6 @@ class ZonaJuegoService extends Service {
           }
         });
       });
-
-   
 
       //Formateando la data
       const mappedData = { ...data };
@@ -121,7 +122,7 @@ class ZonaJuegoService extends Service {
 
         mappedData.imagenes.create.push({ imagen_url: URL_IMAGES });
       }
-      
+
       delete mappedData.imagen_eliminadas;
 
       const payload = await this.database.actualizarUno(mappedData, id);

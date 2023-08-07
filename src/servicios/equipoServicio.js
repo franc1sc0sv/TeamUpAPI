@@ -187,6 +187,30 @@ class EquipoService extends Service {
       }
     }
   };
+  equiposCreados = async ({ id_usuario }) => {
+    try {
+      const payload = await this.database.encontrarMuchosPorObjeto({
+        id_lider: id_usuario,
+      });
+
+      return payload;
+    } catch (error) {
+      throw error;
+    }
+  };
+  equiposRivales = async ({ id_usuario }) => {
+    try {
+      const payload = await this.database.encontrarMuchosPorObjeto({
+        NOT: {
+          id_lider: id_usuario,
+        },
+      });
+
+      return payload;
+    } catch (error) {
+      throw error;
+    }
+  };
   eliminarMiembro = async ({ id_equipo, data }) => {
     try {
       const { id_usuarios } = data;

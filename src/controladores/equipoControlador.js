@@ -195,6 +195,31 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
+  equiposCreados = async (req, res) => {
+    try {
+      const { usuario } = req;
+      const id_usuario = usuario.id;
+      const payload = await this.service.equiposCreados({
+        id_usuario,
+      });
+      return res.status(200).json({ status: "OK", data: payload });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  };
+  equiposRivales = async (req, res) => {
+    try {
+      const { usuario } = req;
+      const id_usuario = usuario.id;
+      const payload = await this.service.equiposRivales({
+        id_usuario,
+      });
+      return res.status(200).json({ status: "OK", data: payload });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  };
   obtenerUnEquipo = async (req, res) => {
     const id = parseInt(req.params.id);
     const { equiposUsuario } = req;

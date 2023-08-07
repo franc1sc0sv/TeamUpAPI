@@ -23,6 +23,14 @@ equipoRouter
   );
 
 equipoRouter
+  .route("/ObtenerEquiposCreados")
+  .get(autentifiacion(__ROL__.ESTUDIANTE), equipoControlador.equiposCreados);
+
+equipoRouter
+  .route("/ObtenerEquiposRivales")
+  .get(autentifiacion(__ROL__.ESTUDIANTE), equipoControlador.equiposRivales);
+
+equipoRouter
   .route("/unirseEquipo")
   .post(autentifiacion(__ROL__.ESTUDIANTE), equipoControlador.unirseEquipo);
 

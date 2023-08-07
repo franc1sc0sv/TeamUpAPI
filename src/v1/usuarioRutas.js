@@ -7,7 +7,7 @@ const usuarioRouter = Router();
 
 usuarioRouter
   .route("/maestro")
-  .get(autentifiacion(__ROL__.COORDINADOR),usuarioControlador.obtenerMaestros)
+  .get(autentifiacion(__ROL__.COORDINADOR), usuarioControlador.obtenerMaestros)
   .post(
     autentifiacion(__ROL__.COORDINADOR),
     usuarioControlador.crearCuentaMaestro
@@ -32,8 +32,9 @@ usuarioRouter
     usuarioControlador.actualizarDatosUsuario
   );
 
-usuarioRouter.route("/:id")
-.get(usuarioControlador.obtenerUnUsuario)
-.delete(autentifiacion(__ROL__.COORDINADOR), usuarioControlador.eliminarUno);
+usuarioRouter
+  .route("/:id")
+  .get(usuarioControlador.obtenerUnUsuario)
+  .delete(autentifiacion(__ROL__.COORDINADOR), usuarioControlador.eliminarUno);
 
 export { usuarioRouter };
