@@ -63,11 +63,11 @@ class PartidoDB extends Database {
         select: partidoSelect,
       });
 
-      if (!partidos.length)
-        throw {
-          status: "FAILED",
-          data: { error: "No hay partidos", code: "pa1" },
-        };
+      // if (!partidos.length)
+      //   throw {
+      //     status: "OK",
+      //     data: { error: "No hay partidos", code: "pa1" },
+      //   };
         
       return partidos;
     } catch (error) {
