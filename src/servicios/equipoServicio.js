@@ -220,6 +220,18 @@ class EquipoService extends Service {
       throw error;
     }
   };
+
+  buscarEquipo = async(nombre)=>{
+    try {
+      const equipoEncontrado = await equipo.buscarEquipo(nombre);
+
+      equipoEncontrado.usuarios = equipoEncontrado.usuarios.map(usuario => usuario.usuarios)
+
+      return equipoEncontrado;
+    } catch (error) {
+        throw error
+    }
+  }
 }
 
 const equipoServicio = new EquipoService(equipo);

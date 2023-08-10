@@ -73,6 +73,7 @@ class Database {
           where: { id: parseInt(id) },
           include: this.includes,
         });
+        if(!payload) throw {status: 'FAILED', data: {error: 'No encontrado !'}}
         return payload;
       }
 
@@ -80,7 +81,7 @@ class Database {
         where: { id: parseInt(id) },
       });
 
-
+    if(!payload) throw {status: 'FAILED', data: {error: 'No encontrado !'}}
       return payload;
     } catch (error) {
       // Si hay un error al obtener el objeto, se lanza una excepción con un mensaje de error personalizado

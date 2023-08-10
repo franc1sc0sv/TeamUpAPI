@@ -9,6 +9,8 @@ import {
   cambiarLiderEsquema,
   eliminarMiembro,
 } from "../esquemas/equipoEsquemas.js";
+import { verificarSiEquipoJuegaMaestrosEsquema } from "../esquemas/partidoEsquemas.js";
+import { zodResponse } from "../helper/index.js";
 
 function eliminarPropiedadesVacias(objeto) {
   const nuevoObjeto = {};
@@ -256,6 +258,19 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
+  buscarEquipo = async(req,res)=>{
+    try {
+       const {nombre} = verificarSiEquipoJuegaMaestrosEsquema.parse(req.body);
+       
+        const equipo = await equipoServicio.buscarEquipo(nombre);
+
+       return res.status(200).json({status: 'OK', data: equipo})
+    } catch (error) {
+        if(!zodResponse(res,error)){
+          return res.status(400).json(error);
+        }
+    }
+  }
 }
 
 const equipoControlador = new EquipoController(

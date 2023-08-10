@@ -10,6 +10,8 @@ import { usuarioRouter } from "./v1/usuarioRutas.js";
 import { deporteRouter } from "./v1/deporteRutas.js";
 import { zonaJuegoRouter } from "./v1/zonaJuegoRouter.js";
 import { equipoRouter } from "./v1/equipoRutas.js";
+import { partidoRouter } from "./v1/partidoRutas.js";
+
 import nivelAcademicoRouter from "./v1/nivelAcademicoRutas.js";
 import tipoDeporteRouter from "./v1/tipoDeportesRutas.js";
 
@@ -38,6 +40,7 @@ app.use(BASE_URL + "/zonaJuego", zonaJuegoRouter);
 app.use(BASE_URL + "/equipo", equipoRouter);
 app.use(BASE_URL + "/niveles-academicos", nivelAcademicoRouter);
 app.use(BASE_URL + "/tipos-deportes", tipoDeporteRouter);
+app.use(BASE_URL + "/partidos", partidoRouter);
 
 //Default route
 app.get("/", (req, res) => {
@@ -79,10 +82,11 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
 
     const tiposDeportes = await prisma.tipoDeporte.findFirst();
 
+    
     if (!tiposDeportes) {
       console.log("Tipos deportes creados !");
       await prisma.tipoDeporte.createMany({
-        data: __TIPOS_DEPORTES__,
+        data: Object.entries(__TIPOS_DEPORTES__).map(deporte => deporte[1])
       });
     }
 

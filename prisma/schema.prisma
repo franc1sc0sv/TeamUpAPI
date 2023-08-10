@@ -26,6 +26,13 @@ model TipoDeporte {
   id          Int       @id @default(autoincrement())
   nombre      String
   descripcion String
+
+  skipMaestro Boolean @default(false)
+  skipCoordinacion Boolean @default(false)
+  skipAsistencia Boolean @default(false)
+
+  opcionalMaestro Boolean @default(false)
+
   deportes    Deporte[]
 }
 

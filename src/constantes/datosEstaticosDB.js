@@ -59,14 +59,18 @@ export const __NIVELES_ACADEMICOS__ = {
   },
 };
 
-export const __TIPOS_DEPORTES__ = [
-  {
-      "nombre": "Cancha Regulada",
-      "descripcion": "Para solicitar un partido de este tipo de deportes deben pasar por coordinacion y un maestro debera cuidarlos"
+export const __TIPOS_DEPORTES__ = {
+  CanchaRegulada: {
+    id: 1,
+    nombre: "Cancha Regulada",
+    descripcion:
+      "Para solicitar un partido de este tipo de deportes deben pasar por coordinacion y un maestro debera cuidarlos",
   },
-  {
-  
-      "nombre": "No Regulado",
-      "descripcion": "No hay personas que supervisen los partidos de estos deportes y las solicitudes no pasan por coordinacion ni por los maestros"
-  }
-]
+
+  NoRegulado: {
+    id: 2,
+    nombre: "No Regulado",
+    descripcion:
+      "No hay personas que supervisen los partidos de estos deportes y las solicitudes no pasan por coordinacion ni por los maestros, pero los usuarios pueden tener un maestro si lo desean",
+  },
+};

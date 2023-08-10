@@ -62,7 +62,7 @@ class Controller {
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
       // Si ocurre un error, se envía una respuesta con el código de estado 500 y el error original
-      return res.status(500).json(error);
+      return res.status(400).json(error);
     }
   };
 

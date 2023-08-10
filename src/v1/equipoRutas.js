@@ -13,6 +13,9 @@ export const equipoRouter = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
+equipoRouter.post("/buscar", equipoControlador.buscarEquipo);
+
 equipoRouter
   .route("/")
   .post(autentifiacion(__ROL__.ESTUDIANTE), equipoControlador.crearEquipo)
