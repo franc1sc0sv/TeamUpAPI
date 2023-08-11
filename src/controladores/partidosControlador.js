@@ -123,8 +123,8 @@ class PartidoController extends Controller {
       const payload = await this.service.verificarSiEquipoJuegaMaestros({
         data,
       });
-      if(!payload){
-        return res.status(400).json({status: 'FAILED', data: {error: 'Hubo un error'}})
+      if (!payload) {
+        return res.status(400).json({ status: 'FAILED', data: { error: 'Hubo un error' } })
       }
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
@@ -197,35 +197,35 @@ class PartidoController extends Controller {
   };
 
 
-  
+
   //Falta tomar asistencia (Maestros)
   //Falta acordar resultados
 
 
 
   //Mis controladores :)
-  obtenerPartidosPorUsuario = async (req,res) =>{
+  obtenerPartidosPorUsuario = async (req, res) => {
     try {
-        const partidos = await partidoServicio.obtenerPartidosPorUsuario(req.usuario.id);
-        return res.status(200).json({status: 'OK', data: partidos});
+      const partidos = await partidoServicio.obtenerPartidosPorUsuario(req.usuario.id);
+      return res.status(200).json({ status: 'OK', data: partidos });
     } catch (error) {
-       return res.status(400).json(error)
+      return res.status(400).json(error)
     }
   }
 
-  obtenerSolicitudesPendientes = async (req,res) => { 
+  obtenerSolicitudesPendientes = async (req, res) => {
     try {
       const partidos = await partidoServicio.obtenerSolicitudesPendientes();
 
-      if(!partidos) return res.status(404).json(errorJSON("No hay partidos !", "pa404"))
+      if (!partidos) return res.status(404).json(errorJSON("No hay partidos !", "pa404"))
 
       return res.status(200).json(goodResponse(partidos))
     } catch (error) {
       return res.status(400).json(error)
     }
-   }
+  }
 
-   aceptarPartidoMaestro = async (req,res) => {
+  aceptarPartidoMaestro = async (req, res) => {
     try {
       const { id } = req.params
       const partidoActualizado = await partidoServicio.aceptarPartidoMaestro(id, req.usuario.id);
@@ -234,19 +234,19 @@ class PartidoController extends Controller {
       console.log(error)
       return res.status(400).json(error)
     }
-   }
+  }
 
-   obtenerPartidosCoordinacion = async (req,res) => { 
+  obtenerPartidosCoordinacion = async (req, res) => {
     try {
       const partidos = await partidoServicio.obtenerPartidosCoordinacion();
 
-      if(!partidos) return res.status(404).json(errorJSON('No se han encontrados partidos'));
+      if (!partidos) return res.status(404).json(errorJSON('No se han encontrados partidos'));
 
       return res.status(200).json(goodResponse(partidos));
     } catch (error) {
       return res.status(400).json(errorJSON(error))
     }
-    }
+  }
 }
 
 const partidoControlador = new PartidoController({}, {}, partidoServicio);

@@ -220,8 +220,7 @@ class EquipoService extends Service {
       throw error;
     }
   };
-
-  buscarEquipo = async(nombre)=>{
+  buscarEquipo = async (nombre) => {
     try {
       const equipoEncontrado = await equipo.buscarEquipo(nombre);
 
@@ -229,7 +228,7 @@ class EquipoService extends Service {
 
       return equipoEncontrado;
     } catch (error) {
-        throw error
+      throw error
     }
   }
 }

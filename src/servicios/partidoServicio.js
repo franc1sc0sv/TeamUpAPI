@@ -9,16 +9,16 @@ class PartidoService extends Service {
   //Estudiantes
   crearSolicitudLocal = async ({ data, jugadores }) => {
     try {
-      data.id_estado = __ESTADOS_PARTIDOS__.PendienteRival.id;
-      const payload = await this.database.crear(data);
-      const { id } = payload;
-      const MappedJugadores = jugadores.map((jugador) => {
-        return { ...jugador, id_partido: id };
-      });
+      // data.id_estado = __ESTADOS_PARTIDOS__.PendienteRival.id;
+      // const payload = await this.database.crear(data);
+      // const { id } = payload;
+      // const MappedJugadores = jugadores.map((jugador) => {
+      //   return { ...jugador, id_partido: id };
+      // });
 
-      const payload2 = await usuariosPartidos.crearMuchos(MappedJugadores);
+      // const payload2 = await usuariosPartidos.crearMuchos(MappedJugadores);
 
-      return { ...payload, ...payload2 };
+      return { ...data, ...jugadores };
     } catch (error) {
       throw error;
     }
@@ -71,7 +71,7 @@ class PartidoService extends Service {
       throw error;
     }
   };
-  obtenerSolicitudesMaestros = async ({}) => {
+  obtenerSolicitudesMaestros = async ({ }) => {
     try {
       const estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
       const payload = await this.database.obtenerSolicitudesPorEstado(estado);
@@ -92,7 +92,7 @@ class PartidoService extends Service {
       throw error;
     }
   };
-  verificarSiEquipoJuegaMaestros = async ({data}) => {
+  verificarSiEquipoJuegaMaestros = async ({ data }) => {
     try {
       const equipoEncontrado = await equipo.encontrarPorObjeto(data);
 
@@ -175,7 +175,7 @@ class PartidoService extends Service {
       throw error;
     }
   };
-  obtenerSolicitudesCoordinacion = async ({}) => {
+  obtenerSolicitudesCoordinacion = async ({ }) => {
     try {
       const estado = __ESTADOS_PARTIDOS__.PendienteCoordinacion.id;
       const payload = await this.database.obtenerSolicitudesPorEstado(estado);
@@ -190,31 +190,31 @@ class PartidoService extends Service {
 
 
 
-  obtenerPartidosPorUsuario = async (id_usuario) =>{
+  obtenerPartidosPorUsuario = async (id_usuario) => {
     try {
-        const partidos = await Partido.obtenerPartidosPorUsuario(id_usuario);
-        return partidos;
+      const partidos = await Partido.obtenerPartidosPorUsuario(id_usuario);
+      return partidos;
     } catch (error) {
       throw error
     }
   }
 
-  obtenerSolicitudesPendientes = async()=>{
+  obtenerSolicitudesPendientes = async () => {
     try {
-        const partidos = await Partido.obtenerSolicitudesPendientes();
-        return partidos;
+      const partidos = await Partido.obtenerSolicitudesPendientes();
+      return partidos;
     } catch (error) {
       throw error
     }
   }
 
-  aceptarPartidoMaestro = async (id,id_usuarioMaestro) => {
+  aceptarPartidoMaestro = async (id, id_usuarioMaestro) => {
     try {
-      
+
       let id_estado = __ESTADOS_PARTIDOS__.PendienteCoordinacion.id;
 
       const partidoEncontrado = await prisma.partidos.findFirst({
-        where: {id: +id},
+        where: { id: +id },
         select: {
           deporte: {
             select: {
@@ -223,16 +223,16 @@ class PartidoService extends Service {
           }
         }
       })
-      
+
       const tipoDeporte = partidoEncontrado.deporte.tipoDeporte;
 
       //Dependiendo el tipo de deporte se saltan a ciertos estados
-      if(tipoDeporte.skipCoordinacion){
-          id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id
+      if (tipoDeporte.skipCoordinacion) {
+        id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id
       }
 
       const partidoModificado = await Partido.aceptarPartidoMaestro(+id, id_estado, id_usuarioMaestro);
-      
+
       return partidoModificado;
     } catch (error) {
       throw error;
@@ -240,14 +240,14 @@ class PartidoService extends Service {
   }
 
 
-  obtenerPartidosCoordinacion = async () => { 
+  obtenerPartidosCoordinacion = async () => {
     try {
-        const partidos = await Partido.obtenerPartidosCoordinacion();
-        return partidos;
+      const partidos = await Partido.obtenerPartidosCoordinacion();
+      return partidos;
     } catch (error) {
       throw error;
     }
-   }
+  }
 
 }
 
