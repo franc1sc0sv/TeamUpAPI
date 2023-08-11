@@ -7,6 +7,47 @@ import { esLiderDeEquipo } from "../middleware/esLiderDeEquipo.js";
 export const partidoRouter = Router();
 
 partidoRouter.get(
+  "/maestro/asistencia/:id",
+  autentifiacion(__ROL__.MAESTRO),
+  partidoControlador.colocarAsistencia
+);
+partidoRouter.get(
+  "/maestro/cancelar/:id",
+  autentifiacion(__ROL__.MAESTRO),
+  partidoControlador.cancelarPartido
+);
+
+partidoRouter.get(
+  "/maestro/cuidar",
+  autentifiacion(__ROL__.MAESTRO),
+  partidoControlador.obtenerPartidosCuidarMaestro
+);
+
+partidoRouter.post(
+  "/coordinacion/aceptar/:id",
+  autentifiacion(__ROL__.COORDINADOR),
+  partidoControlador.aceptarPartidoCoordinador
+);
+
+partidoRouter.get(
+  "/zonadejuegos/:id",
+  autentifiacion(__ROL__.COORDINADOR),
+  partidoControlador.partidosZonaJuegosHabilitados
+);
+
+partidoRouter.post(
+  "/coordinacion/posponer/:id",
+  autentifiacion(__ROL__.COORDINADOR),
+  partidoControlador.posponerFecha
+);
+
+partidoRouter.get(
+  "/coordinacion/rechazar/:id",
+  autentifiacion(__ROL__.COORDINADOR),
+  partidoControlador.rechazarSolicitudCoordinacion
+);
+
+partidoRouter.get(
   "/maestro/aceptar/:id",
   autentifiacion(__ROL__.MAESTRO),
   partidoControlador.aceptarPartidoMaestro

@@ -38,6 +38,14 @@ const posponerSolicitudEsquema = z.object({
 
 const resultadosPartidoEsquema = z.object({});
 
+export const posponerEsquema = z.object({
+  fecha: z.string().nonempty().or(z.date())
+})
+
+export const aceptarPartido = z.object({
+  id_zona_juego: z.number({required_error: "'id_zona_juego' falta"}).nonnegative("No debe ser negativo")
+})
+
 const verificarSiEquipoJuegaMaestrosEsquema = z.object({
   nombre: z
     .string({ required_error: "El nombre debe ser un string" })
