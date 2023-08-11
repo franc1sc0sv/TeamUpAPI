@@ -8,8 +8,10 @@ import {
   posponerSolicitudEsquema,
   aceptarSolicitudVisitante,
   verificarSiEquipoJuegaMaestrosEsquema,
+  posponerEsquema,
+  aceptarPartido,
 } from "../esquemas/partidoEsquemas.js";
-import { errorJSON, goodResponse } from "../helper/index.js";
+import { errorJSON, goodResponse, zodResponse } from "../helper/index.js";
 
 class PartidoController extends Controller {
   //Estudiantes
@@ -128,7 +130,7 @@ class PartidoController extends Controller {
       }
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json(error);
     }
   };
@@ -171,22 +173,6 @@ class PartidoController extends Controller {
       return res.status(500).json(error);
     }
   };
-  rechazarSolicitudCoordinacion = async (req, res) => {
-    const id_partido = req.params.id;
-    try {
-      if (!id_partido) {
-        return res
-          .status(400)
-          .json({ status: "FAILED", data: { error: "id requerido" } });
-      }
-      const payload = await this.service.rechazarSolicitudCoordinacion({
-        id_partido,
-      });
-      return res.status(200).json({ status: "OK", data: payload });
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-  };
   obtenerSolicitudesCoordinacion = async (req, res) => {
     try {
       const payload = await this.service.obtenerSolicitudesCoordinacion();
@@ -196,22 +182,20 @@ class PartidoController extends Controller {
     }
   };
 
-
-
   //Falta tomar asistencia (Maestros)
   //Falta acordar resultados
-
-
 
   //Mis controladores :)
   obtenerPartidosPorUsuario = async (req, res) => {
     try {
-      const partidos = await partidoServicio.obtenerPartidosPorUsuario(req.usuario.id);
-      return res.status(200).json({ status: 'OK', data: partidos });
+      const partidos = await partidoServicio.obtenerPartidosPorUsuario(
+        req.usuario.id
+      );
+      return res.status(200).json({ status: "OK", data: partidos });
     } catch (error) {
-      return res.status(400).json(error)
+      return res.status(400).json(error);
     }
-  }
+  };
 
   obtenerSolicitudesPendientes = async (req, res) => {
     try {
@@ -244,9 +228,129 @@ class PartidoController extends Controller {
 
       return res.status(200).json(goodResponse(partidos));
     } catch (error) {
-      return res.status(400).json(errorJSON(error))
+      return res.status(400).json(error);
     }
-  }
+  };
+
+  aceptarPartidoMaestro = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const partidoActualizado = await partidoServicio.aceptarPartidoMaestro(
+        id,
+        req.usuario.id
+      );
+      return res.json(goodResponse(partidoActualizado));
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+    }
+  };
+
+  obtenerPartidosCoordinacion = async (req, res) => {
+    try {
+      const partidos = await partidoServicio.obtenerPartidosCoordinacion();
+
+      if (!partidos)
+        return res
+          .status(404)
+          .json(errorJSON("No se han encontrados partidos"));
+
+      return res.status(200).json(goodResponse(partidos));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  rechazarSolicitudCoordinacion = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const partido = await partidoServicio.rechazarSolicitudCoordinacion(id);
+
+      return res.status(200).json(goodResponse(partido));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  posponerFecha = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { fecha } = posponerEsquema.parse(req.body);
+
+      const partidoPospuesto = await partidoServicio.posponerFecha(id, fecha);
+
+      return res.status(200).json(goodResponse(partidoPospuesto));
+    } catch (error) {
+      console.log(error);
+      if (zodResponse(res, error)) {
+        return;
+      }
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  partidosZonaJuegosHabilitados = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const zonaDeJuegos = await partidoServicio.partidosZonaJuegosHabilitados(
+        id
+      );
+      return res.status(200).json(goodResponse(zonaDeJuegos));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  aceptarPartidoCoordinador = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { id_zona_juego } = aceptarPartido.parse(req.body);
+      const partido = await partidoServicio.aceptarPartidoCoordinador(
+        id,
+        id_zona_juego
+      );
+
+      return res.status(200).json(goodResponse(partido));
+    } catch (error) {
+      if (zodResponse(res, error)) return;
+
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  obtenerPartidosCuidarMaestro = async (req, res) => {
+    try {
+      const partidos = await partidoServicio.obtenerPartidosCuidarMaestro(
+        req.usuario.id
+      );
+      return res.status(200).json(goodResponse(partidos));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  colocarAsistencia = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const partido = await partidoServicio.colocarAsistencia(id);
+      return res.status(200).json(goodResponse(partido));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  cancelarPartido = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const partido = await partidoServicio.cancelarPartido(id);
+      return res.status(200).json(goodResponse(partido));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+
 }
 
 const partidoControlador = new PartidoController({}, {}, partidoServicio);

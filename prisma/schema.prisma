@@ -40,6 +40,8 @@ model PartidosEstado {
   id          Int        @id @default(autoincrement())
   nombre      String
   descripcion String
+  fase Int @default(1)
+
   partidos    Partidos[]
 }
 

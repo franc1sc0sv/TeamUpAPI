@@ -3,36 +3,43 @@ export const __ESTADOS_PARTIDOS__ = {
     id: 1,
     nombre: "Pendiente rival",
     descripcion: "",
+    fase: 1,
   },
   PendienteMaestro: {
     id: 2,
     nombre: "Pendiente maestro",
     descripcion: "",
+    fase: 2
   },
   PendienteCoordinacion: {
     id: 3,
     nombre: "Pendiente coordinacion",
     descripcion: "",
+    fase: 3
   },
   PendienteAsistencia: {
     id: 4,
     nombre: "Pendiente asistencia",
     descripcion: "",
+    fase: 4
   },
   EnJuego: {
     id: 5,
     nombre: "Partido en juego",
     descripcion: "",
+    fase: 5
   },
   Finalizado: {
     id: 6,
     nombre: "Partido finalizado",
     descripcion: "",
+    fase: 6
   },
   Cancelado: {
     id: 7,
     nombre: "Partido cancelado",
     descripcion: "",
+    fase: 7
   },
 };
 

@@ -2,7 +2,10 @@ import { Service } from "../clases/Servicios.js";
 import { Partido } from "../db/partido.js";
 import { equipo } from "../db/equipo.js";
 import { usuariosPartidos } from "../db/usuariosPartidos.js";
-import { __ESTADOS_PARTIDOS__, __TIPOS_DEPORTES__ } from "../constantes/datosEstaticosDB.js";
+import {
+  __ESTADOS_PARTIDOS__,
+  __TIPOS_DEPORTES__,
+} from "../constantes/datosEstaticosDB.js";
 import { prisma } from "../config/db.js";
 
 class PartidoService extends Service {
@@ -188,29 +191,26 @@ class PartidoService extends Service {
   //Falta tomar asistencia (Maestros)
   //Falta acordar resultados
 
-
-
   obtenerPartidosPorUsuario = async (id_usuario) => {
     try {
       const partidos = await Partido.obtenerPartidosPorUsuario(id_usuario);
       return partidos;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   obtenerSolicitudesPendientes = async () => {
     try {
       const partidos = await Partido.obtenerSolicitudesPendientes();
       return partidos;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   aceptarPartidoMaestro = async (id, id_usuarioMaestro) => {
     try {
-
       let id_estado = __ESTADOS_PARTIDOS__.PendienteCoordinacion.id;
 
       const partidoEncontrado = await prisma.partidos.findFirst({
@@ -237,8 +237,7 @@ class PartidoService extends Service {
     } catch (error) {
       throw error;
     }
-  }
-
+  };
 
   obtenerPartidosCoordinacion = async () => {
     try {
@@ -247,8 +246,82 @@ class PartidoService extends Service {
     } catch (error) {
       throw error;
     }
-  }
+  };
 
+  rechazarSolicitudCoordinacion = async (id) => {
+    try {
+      const partidoRechazado = await Partido.rechazarPartidoCoordinacion(id);
+      return partidoRechazado;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  posponerFecha = async (id, fecha) => {
+    try {
+      const partido = await Partido.posponerFecha(id, new Date(fecha));
+      return partido;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  partidosZonaJuegosHabilitados = async (id) => {
+    try {
+      const partido = await Partido.obtenerUno(id);
+
+      if (!partido) return null;
+
+      const zonaDeJuegos = await Partido.partidosZonaJuegosHabilitados(
+        partido.id_deporte
+      );
+
+      return zonaDeJuegos;
+    } catch (error) {
+      throw error;
+    }
+  };
+  aceptarPartidoCoordinador = async (id, id_zona_juego) => {
+    try {
+      const partido = await Partido.aceptarPartidoCoordinador(
+        id,
+        id_zona_juego
+      );
+      return partido;
+    } catch (error) {
+      throw error;
+    }
+  };
+  obtenerPartidosCuidarMaestro = async (id) => {
+    try {
+      const partidos = await Partido.obtenerPartidosCuidarMaestro(id);
+
+      return partidos;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  colocarAsistencia = async (id) => {
+    try {
+      const partidos = await Partido.colocarAsistencia(id);
+
+      return partidos;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  cancelarPartido = async (id) => {
+    try {
+      const partidos = await Partido.cancelarPartido(id);
+
+      return partidos;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
 }
 
 const partidoServicio = new PartidoService(Partido);
