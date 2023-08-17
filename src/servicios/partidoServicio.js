@@ -14,16 +14,16 @@ class PartidoService extends Service {
   //Estudiantes
   crearSolicitudLocal = async ({ data, jugadores }) => {
     try {
-      data.id_estado = __ESTADOS_PARTIDOS__.PendienteRival.id;
-      const payload = await this.database.crear(data);
-      const { id } = payload;
-      const MappedJugadores = jugadores.map((jugador) => {
-        return { ...jugador, id_partido: id };
-      });
+      // data.id_estado = __ESTADOS_PARTIDOS__.PendienteRival.id;
+      // const payload = await this.database.crear(data);
+      // const { id } = payload;
+      // const MappedJugadores = jugadores.map((jugador) => {
+      //   return { ...jugador, id_partido: id };
+      // });
 
-      const payload2 = await usuariosPartidos.crearMuchos(MappedJugadores);
+      // const payload2 = await usuariosPartidos.crearMuchos(MappedJugadores);
 
-      return { ...payload, ...payload2 };
+      return { ...data, ...jugadores };
     } catch (error) {
       throw error;
     }
@@ -76,7 +76,7 @@ class PartidoService extends Service {
       throw error;
     }
   };
-  obtenerSolicitudesMaestros = async ({}) => {
+  obtenerSolicitudesMaestros = async ({ }) => {
     try {
       const estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
       const payload = await this.database.obtenerSolicitudesPorEstado(estado);
@@ -180,7 +180,7 @@ class PartidoService extends Service {
       throw error;
     }
   };
-  obtenerSolicitudesCoordinacion = async ({}) => {
+  obtenerSolicitudesCoordinacion = async ({ }) => {
     try {
       const estado = __ESTADOS_PARTIDOS__.PendienteCoordinacion.id;
       const payload = await this.database.obtenerSolicitudesPorEstado(estado);
@@ -220,24 +220,20 @@ class PartidoService extends Service {
         select: {
           deporte: {
             select: {
-              tipoDeporte: true,
-            },
-          },
-        },
-      });
+              tipoDeporte: true
+            }
+          }
+        }
+      })
 
       const tipoDeporte = partidoEncontrado.deporte.tipoDeporte;
 
       //Dependiendo el tipo de deporte se saltan a ciertos estados
       if (tipoDeporte.skipCoordinacion) {
-        id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id;
+        id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id
       }
 
-      const partidoModificado = await Partido.aceptarPartidoMaestro(
-        +id,
-        id_estado,
-        id_usuarioMaestro
-      );
+      const partidoModificado = await Partido.aceptarPartidoMaestro(+id, id_estado, id_usuarioMaestro);
 
       return partidoModificado;
     } catch (error) {
