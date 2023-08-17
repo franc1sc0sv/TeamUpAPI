@@ -66,19 +66,19 @@ partidoRouter.get(
 );
 
 partidoRouter
-  .route("/")
-  .get(
-    autentifiacion(__ROL__.ESTUDIANTE),
-    partidoControlador.obtenerPartidosPorUsuario
-  )
+  .route("/:id")
   .post(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,
     partidoControlador.crearSolicitudLocal
-  );
-
-partidoRouter
-  .route("/:id")
+  )
   .get(autentifiacion(__ROL__.TODOS), partidoControlador.obtenerUno)
   .patch(autentifiacion(__ROL__.TODOS), partidoControlador.actualizarUno)
   .delete(autentifiacion(__ROL__.ESTUDIANTE), partidoControlador.eliminarUno);
+
+partidoRouter
+  .route("/")
+  .get(
+    autentifiacion(__ROL__.ESTUDIANTE),
+    partidoControlador.obtenerPartidosPorUsuario
+  );

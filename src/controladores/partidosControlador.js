@@ -17,25 +17,32 @@ class PartidoController extends Controller {
   //Estudiantes
   crearSolicitudLocal = async (req, res) => {
     const rawdata = req.body;
+
     try {
+      const { usuario } = req;
       const data = solicitudEsquema.parse(rawdata);
-      const jugadores = data.jugadores.map((jugador) =>
+      const { jugadores: rawjugadores } = rawdata;
+
+      const jugadores = rawjugadores.map((jugador) =>
         solicitudJugadoresEsquema.parse(jugador)
       );
 
       const payload = await this.service.crearSolicitudLocal({
+        usuario,
         data,
         jugadores,
       });
 
+      if (payload.error)
+        return res
+          .status(200)
+          .json({ status: "OK", data: { error: payload.error } });
+
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
-      if (error instanceof ZodError) {
-        const zodError = mostrarZodError(error);
-
-        return res
-          .status(400)
-          .json({ status: "FAILED", data: { error: zodError } });
+      console.log(error);
+      if (zodResponse(res, error)) {
+        return;
       }
       return res.status(500).json(error);
     }
@@ -126,7 +133,9 @@ class PartidoController extends Controller {
         data,
       });
       if (!payload) {
-        return res.status(400).json({ status: 'FAILED', data: { error: 'Hubo un error' } })
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "Hubo un error" } });
       }
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
@@ -201,30 +210,37 @@ class PartidoController extends Controller {
     try {
       const partidos = await partidoServicio.obtenerSolicitudesPendientes();
 
-      if (!partidos) return res.status(404).json(errorJSON("No hay partidos !", "pa404"))
+      if (!partidos)
+        return res.status(404).json(errorJSON("No hay partidos !", "pa404"));
 
-      return res.status(200).json(goodResponse(partidos))
+      return res.status(200).json(goodResponse(partidos));
     } catch (error) {
-      return res.status(400).json(error)
+      return res.status(400).json(error);
     }
-  }
+  };
 
   aceptarPartidoMaestro = async (req, res) => {
     try {
-      const { id } = req.params
-      const partidoActualizado = await partidoServicio.aceptarPartidoMaestro(id, req.usuario.id);
+      const { id } = req.params;
+      const partidoActualizado = await partidoServicio.aceptarPartidoMaestro(
+        id,
+        req.usuario.id
+      );
       return res.json(goodResponse(partidoActualizado));
     } catch (error) {
-      console.log(error)
-      return res.status(400).json(error)
+      console.log(error);
+      return res.status(400).json(error);
     }
-  }
+  };
 
   obtenerPartidosCoordinacion = async (req, res) => {
     try {
       const partidos = await partidoServicio.obtenerPartidosCoordinacion();
 
-      if (!partidos) return res.status(404).json(errorJSON('No se han encontrados partidos'));
+      if (!partidos)
+        return res
+          .status(404)
+          .json(errorJSON("No se han encontrados partidos"));
 
       return res.status(200).json(goodResponse(partidos));
     } catch (error) {
@@ -349,8 +365,6 @@ class PartidoController extends Controller {
       return res.status(400).json(errorJSON(error));
     }
   };
-
-
 }
 
 const partidoControlador = new PartidoController({}, {}, partidoServicio);

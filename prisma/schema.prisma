@@ -23,26 +23,26 @@ model NivelAcademico {
 }
 
 model TipoDeporte {
-  id          Int       @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   nombre      String
   descripcion String
 
-  skipMaestro Boolean @default(false)
+  skipMaestro      Boolean @default(false)
   skipCoordinacion Boolean @default(false)
-  skipAsistencia Boolean @default(false)
+  skipAsistencia   Boolean @default(false)
 
   opcionalMaestro Boolean @default(false)
 
-  deportes    Deporte[]
+  deportes Deporte[]
 }
 
 model PartidosEstado {
-  id          Int        @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   nombre      String
   descripcion String
-  fase Int @default(1)
+  fase        Int    @default(1)
 
-  partidos    Partidos[]
+  partidos Partidos[]
 }
 
 // Tablas de datos
