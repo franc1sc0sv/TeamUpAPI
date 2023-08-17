@@ -117,7 +117,7 @@ class Database {
       return true;
     } catch (error) {
       // Si hay un error al eliminar el objeto, se lanza una excepción con un mensaje de error personalizado
-      // console.log(error);
+      console.log(error);
       throw { status: "FAILED", data: { error: "Registro no existe !" } };
     }
   };

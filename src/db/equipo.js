@@ -77,6 +77,6 @@ class EquiposDB extends Database {
   };
 }
 
-const equipo = new EquiposDB("Equipos");
+const equipo = new EquiposDB("equipos");
 
 export { equipo };

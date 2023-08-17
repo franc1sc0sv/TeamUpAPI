@@ -63,6 +63,11 @@ const verificarSiEquipoJuegaMaestrosEsquema = z.object({
     .nonempty("El nombre no debe estar vacio"),
 });
 
+export const partidoResultadoEsquema = z.object({
+  resultado_local: z.number({required_error: "resultado_local"}),
+  resultado_visitante: z.number({required_error: "resultado_visitante"}),
+})
+
 export {
   solicitudEsquema,
   solicitudJugadoresEsquema,
