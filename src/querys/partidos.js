@@ -24,12 +24,12 @@ export const partidosPendientes = {
     select: {
       lider: {
         select: {
-          nombre: true
-        }
-      }
-    }
-  }
-}
+          nombre: true,
+        },
+      },
+    },
+  },
+};
 
 export const misPartidosWhere = (equipos_ids, id_usuario) => ({
   AND: [
@@ -46,3 +46,16 @@ export const misPartidosWhere = (equipos_ids, id_usuario) => ({
     },
   ],
 });
+
+export const partidosEquiposLiderSelect = {
+  equipo_local: {
+    select: {
+      lider: true,
+    },
+  },
+  equipo_visitante: {
+    select: {
+      lider: true,
+    },
+  },
+};

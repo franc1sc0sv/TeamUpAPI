@@ -6,6 +6,12 @@ import { esLiderDeEquipo } from "../middleware/esLiderDeEquipo.js";
 
 export const partidoRouter = Router();
 
+partidoRouter.post(
+  "/enviar-resultado/:id",
+  autentifiacion(__ROL__.TODOS),
+  partidoControlador.enviarResultados
+);
+
 partidoRouter.get(
   "/maestro/asistencia/:id",
   autentifiacion(__ROL__.MAESTRO),

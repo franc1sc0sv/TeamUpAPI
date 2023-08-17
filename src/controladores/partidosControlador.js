@@ -10,6 +10,7 @@ import {
   verificarSiEquipoJuegaMaestrosEsquema,
   posponerEsquema,
   aceptarPartido,
+  partidoResultadoEsquema,
 } from "../esquemas/partidoEsquemas.js";
 import { errorJSON, goodResponse, zodResponse } from "../helper/index.js";
 
@@ -330,7 +331,29 @@ class PartidoController extends Controller {
     }
   };
 
+  enviarResultados = async (req, res) => {
+    try {
+      const { id } = req.params;
 
+      const datos = partidoResultadoEsquema.parse(req.body);
+
+      const resultados = await partidoServicio.enviarResultados(
+        {
+          ...datos,
+          id_partido: +id,
+        },
+        req.usuario.role
+      );
+
+      return res.status(200).json(goodResponse(resultados));
+    } catch (error) {
+      console.log(error)
+      if (zodResponse(res, error)) {
+        return;
+      }
+      return res.status(400).json(errorJSON("Hubo un error"));
+    }
+  };
 }
 
 const partidoControlador = new PartidoController({}, {}, partidoServicio);

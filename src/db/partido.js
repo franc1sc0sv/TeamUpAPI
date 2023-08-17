@@ -71,7 +71,7 @@ class PartidoDB extends Database {
       //     status: "OK",
       //     data: { error: "No hay partidos", code: "pa1" },
       //   };
-        
+
       return partidos;
     } catch (error) {
       throw error;
@@ -161,80 +161,101 @@ class PartidoDB extends Database {
     }
   };
 
-  partidosZonaJuegosHabilitados = async ( id_deporte ) => {
+  partidosZonaJuegosHabilitados = async (id_deporte) => {
     try {
       const zonaDeJuegos = prisma.zonaDejuego.findMany({
         where: {
-          id_deporte
-        }
-      })
+          id_deporte,
+        },
+      });
       return zonaDeJuegos;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   aceptarPartidoCoordinador = async (id, id_zona_juego) => {
     try {
       const partido = await prisma.partidos.update({
-        where: {id: +id},
+        where: { id: +id },
         data: {
           id_estado: __ESTADOS_PARTIDOS__.PendienteAsistencia.id,
-          id_zona_juego
-        }
-      })
+          id_zona_juego,
+        },
+      });
 
       return partido;
     } catch (error) {
       throw error;
     }
-  }
+  };
 
-  obtenerPartidosCuidarMaestro = async(id_usuarioMaestro)=>{
-      try {
-        const partidos = await prisma.partidos.findMany({
-          where: {
-            id_usuarioMaestro,
-            fecha: {gte: new Date()}
-          },
-          select: partidoSelect
-        })
-
-        return partidos;
-      } catch (error) {
-        console.log(error)
-        throw error;
-      }
-  }
-
-  colocarAsistencia = async (id)=>{
+  obtenerPartidosCuidarMaestro = async (id_usuarioMaestro) => {
     try {
-        const partido = await prisma.partidos.update({
-          where: {id: +id},
-          data: {
-            id_estado: __ESTADOS_PARTIDOS__.EnJuego.id
-          }
-        })
+      const partidos = await prisma.partidos.findMany({
+        where: {
+          id_usuarioMaestro,
+          id_estado: __ESTADOS_PARTIDOS__.EnJuego.id
+          // fecha: { gte: new Date() },
+        },
+        select: partidoSelect,
+      });
 
-        return partido
+      return partidos;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  colocarAsistencia = async (id) => {
+    try {
+      const partido = await prisma.partidos.update({
+        where: { id: +id },
+        data: {
+          id_estado: __ESTADOS_PARTIDOS__.EnJuego.id,
+        },
+      });
+
+      return partido;
     } catch (error) {
       throw error;
     }
-  }
-  cancelarPartido = async (id)=>{
+  };
+  cancelarPartido = async (id) => {
     try {
-        const partido = await prisma.partidos.update({
-          where: {id: +id},
-          data: {
-            id_estado: __ESTADOS_PARTIDOS__.Cancelado.id
-          }
-        })
+      const partido = await prisma.partidos.update({
+        where: { id: +id },
+        data: {
+          id_estado: __ESTADOS_PARTIDOS__.Cancelado.id,
+        },
+      });
 
-        return partido
+      return partido;
     } catch (error) {
       throw error;
     }
-  }
+  };
+
+  enviarResultados = async (data, id_estado) => {
+    try {
+      const resultado = await prisma.partidoResultado.create({
+        data
+      });
+
+      await prisma.partidos.update({
+        where: {
+          id: data.id_partido,
+        },
+        data: {
+          id_estado
+        }
+      });
+      return resultado;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const Partido = new PartidoDB("Partidos", {
@@ -244,6 +265,7 @@ const Partido = new PartidoDB("Partidos", {
   estado: true,
   usuarioMaestro: true,
   ZonaDejuego: true,
+  resultado: true
 });
 
 export { Partido };

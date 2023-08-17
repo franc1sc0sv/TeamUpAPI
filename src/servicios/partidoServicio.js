@@ -7,6 +7,8 @@ import {
   __TIPOS_DEPORTES__,
 } from "../constantes/datosEstaticosDB.js";
 import { prisma } from "../config/db.js";
+import { __ROL__ } from "../constantes/roles.js";
+import { partidosEquiposLiderSelect } from "../querys/partidos.js";
 
 class PartidoService extends Service {
   //Estudiantes
@@ -325,6 +327,37 @@ class PartidoService extends Service {
       throw error;
     }
   };
+
+  enviarResultados = async (data, rol) => { 
+    try {
+
+      //Obtener todos los datos del partido
+      const partido = await prisma.partidos.findFirst({
+        where: {id: data.id_partido},
+        select: partidosEquiposLiderSelect
+      })
+
+      //Obtener id del usuario lider local que propone resultado
+      const id_usuario_resultadoPublicar = partido.equipo_local.lider.id
+      //Obtener id del usuario lider visitante que aceptar
+      const id_usuario_resultadoAceptar = partido.equipo_visitante.lider.id
+
+      let partidoEstado = __ESTADOS_PARTIDOS__.EnJuego.id;
+
+      if(rol == __ROL__.MAESTRO){
+        partidoEstado = __ESTADOS_PARTIDOS__.Finalizado.id
+      }
+
+      const resultado = await Partido.enviarResultados({
+        id_usuario_resultadoAceptar,
+        id_usuario_resultadoPublicar,
+        ...data
+      }, partidoEstado)
+      return resultado;
+    } catch (error) {
+      throw error;
+    }
+   }
   
 }
 

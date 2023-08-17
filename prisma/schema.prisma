@@ -23,26 +23,26 @@ model NivelAcademico {
 }
 
 model TipoDeporte {
-  id          Int       @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   nombre      String
   descripcion String
 
-  skipMaestro Boolean @default(false)
+  skipMaestro      Boolean @default(false)
   skipCoordinacion Boolean @default(false)
-  skipAsistencia Boolean @default(false)
+  skipAsistencia   Boolean @default(false)
 
   opcionalMaestro Boolean @default(false)
 
-  deportes    Deporte[]
+  deportes Deporte[]
 }
 
 model PartidosEstado {
-  id          Int        @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   nombre      String
   descripcion String
-  fase Int @default(1)
+  fase        Int    @default(1)
 
-  partidos    Partidos[]
+  partidos Partidos[]
 }
 
 // Tablas de datos
@@ -60,6 +60,9 @@ model Usuarios {
   equiposJugador    UsuariosEquipos[]
   usuariosPartidos  UsuariosPartidos[]
   partidoMaestro    Partidos[]         @relation("partidosMaestro")
+
+  resultadosAceptar  PartidoResultado[] @relation("usuarioResultadoAceptar")
+  resultadosPublicar PartidoResultado[] @relation("usuarioResultadoPublicar")
 }
 
 model Deporte {
@@ -129,6 +132,7 @@ model Partidos {
   id_equipo_visitante Int
   id_zona_juego       Int?
 
+  resultado        PartidoResultado?
   estado           PartidosEstado     @relation(fields: [id_estado], references: [id], onDelete: Cascade, onUpdate: Cascade)
   usuarioMaestro   Usuarios?          @relation("partidosMaestro", fields: [id_usuarioMaestro], references: [id], onDelete: Cascade, onUpdate: Cascade)
   deporte          Deporte            @relation(fields: [id_deporte], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -136,6 +140,22 @@ model Partidos {
   equipo_visitante Equipos            @relation("equipo_visitante", fields: [id_equipo_visitante], references: [id])
   usuarios         UsuariosPartidos[]
   ZonaDejuego      ZonaDejuego?       @relation(fields: [id_zona_juego], references: [id])
+}
+
+model PartidoResultado {
+  id                           Int @id @default(autoincrement())
+  id_partido                   Int @unique
+  id_usuario_resultadoAceptar  Int
+  id_usuario_resultadoPublicar Int
+
+  resultado_local     Int
+  resultado_visitante Int
+  confirmado          Boolean @default(false)
+
+  partido Partidos @relation(fields: [id_partido], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  usuarioResultadoAceptar  Usuarios @relation("usuarioResultadoAceptar", fields: [id_usuario_resultadoAceptar], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarioResultadoPublicar Usuarios @relation("usuarioResultadoPublicar", fields: [id_usuario_resultadoPublicar], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model UsuariosPartidos {
