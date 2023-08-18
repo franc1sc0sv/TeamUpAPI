@@ -32,19 +32,37 @@ export const partidosPendientes = {
 };
 
 export const misPartidosWhere = (equipos_ids, id_usuario) => ({
-  AND: [
+  OR: [
     {
-      OR: [
-        { id_equipo_local: { in: equipos_ids } },
-        { id_equipo_visitante: { in: equipos_ids } },
+      AND: [
+        {
+          OR: [
+            { id_equipo_local: { in: equipos_ids } },
+            { id_equipo_visitante: { in: equipos_ids } },
+          ],
+        },
+        {
+          usuarios: {
+            some: { id_usuario },
+          },
+        },
       ],
     },
     {
-      usuarios: {
-        some: { id_usuario },
-      },
-    },
-  ],
+      OR: [
+        {
+          equipo_local: {
+            id_lider: id_usuario
+          },
+        },
+        {
+          equipo_visitante: {
+            id_lider: id_usuario
+          },
+        }
+      ]
+    }
+  ]
 });
 
 export const partidosEquiposLiderSelect = {

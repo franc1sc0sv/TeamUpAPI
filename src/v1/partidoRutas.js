@@ -71,6 +71,13 @@ partidoRouter.get(
   partidoControlador.obtenerPartidosCoordinacion
 );
 
+partidoRouter.get(
+  "/estudiante/cancelar/:id",
+  autentifiacion(__ROL__.ESTUDIANTE),
+  partidoControlador.cancelarPartido
+);
+
+
 partidoRouter
   .route("/:id")
   .post(
