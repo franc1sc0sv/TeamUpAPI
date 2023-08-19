@@ -16,6 +16,22 @@ const solicitudEsquema = z.object({
   jugadores: z.array(z.object({})),
   maestro_intermediario: z.boolean().nullish(),
 });
+
+const solicitudRivalJugadoresEsquema = z.object({
+  id: z.number(),
+  nombre: z
+    .string({ required_error: "El nombre debe ser un string" })
+    .nonempty("El nombre no debe estar vacio"),
+  rango: z
+    .string({ required_error: "El rango debe ser un string" })
+    .nonempty("El rango no debe estar vacio"),
+  estado: z
+    .string({ required_error: "El estado debe ser un string" })
+    .nonempty("El estado no debe estar vacio")
+    .nullable(),
+  id_equipo: z.number(),
+});
+
 const solicitudJugadoresEsquema = z.object({
   id: z.number(),
   nombre: z
@@ -64,9 +80,9 @@ const verificarSiEquipoJuegaMaestrosEsquema = z.object({
 });
 
 export const partidoResultadoEsquema = z.object({
-  resultado_local: z.number({required_error: "resultado_local"}),
-  resultado_visitante: z.number({required_error: "resultado_visitante"}),
-})
+  resultado_local: z.number({ required_error: "resultado_local" }),
+  resultado_visitante: z.number({ required_error: "resultado_visitante" }),
+});
 
 export {
   solicitudEsquema,

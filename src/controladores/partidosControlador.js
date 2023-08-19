@@ -58,8 +58,9 @@ class PartidoController extends Controller {
           .json({ status: "FAILED", data: { error: "id requerido" } });
       }
 
-      const data = aceptarSolicitudVisitante.parse(rawdata);
-      const jugadores = data.map((jugador) =>
+      const { jugadores: jugadoresraw } = rawdata;
+
+      const jugadores = jugadoresraw.map((jugador) =>
         solicitudJugadoresEsquema.parse(jugador)
       );
       const payload = await this.service.aceptarSolicitudRival({
@@ -68,6 +69,7 @@ class PartidoController extends Controller {
       });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
+      console.log(error);
       return res.status(500).json(error);
     }
   };
@@ -84,6 +86,26 @@ class PartidoController extends Controller {
       });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
+      return res.status(500).json(error);
+    }
+  };
+  obtenerMiembrosPartido = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { usuario } = req;
+      if (!id) {
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: "id requerido" } });
+      }
+
+      const payload = await this.service.obtenerMiembrosPartido({
+        id,
+        usuario,
+      });
+      return res.status(200).json({ status: "OK", data: payload });
+    } catch (error) {
+      console.log(error);
       return res.status(500).json(error);
     }
   };

@@ -29,6 +29,19 @@ const validarFecha = (stringFecha) => {
 import { __ROL__ } from "../constantes/roles.js";
 import { partidosEquiposLiderSelect } from "../querys/partidos.js";
 
+const miembrosEquipo = ({ data }) => {
+  const { usuarios } = data;
+  const { lider } = data;
+  const DatosUsuarios = usuarios?.map((jugador) => {
+    const { usuarios } = jugador;
+    return { id: usuarios.id, nombre: usuarios.nombre, rango: "miembro" };
+  });
+
+  DatosUsuarios.push({ id: lider.id, nombre: lider.nombre, rango: "lider" });
+
+  return [...DatosUsuarios];
+};
+
 class PartidoService extends Service {
   //Estudiantes
   crearSolicitudLocal = async ({ data, jugadores, usuario }) => {
@@ -88,7 +101,11 @@ class PartidoService extends Service {
             "Alguno de los usuarios no pertence al equipo ta bonito postman",
         };
 
-      const mappedJugadores = jugadores.map((jugador) => ({
+      const filteredjugadores = jugadores.filter((jugador) => {
+        return jugador.estado !== null;
+      });
+
+      const mappedJugadores = filteredjugadores.map((jugador) => ({
         esReserva: jugador.estado === "titular" ? false : true,
         id_usuario: jugador.id,
         id_equipo: id_equipo_local,
@@ -115,40 +132,22 @@ class PartidoService extends Service {
   };
   aceptarSolicitudRival = async ({ jugadores, id_partido }) => {
     try {
-      // const {
-      //   nombre,
-      //   skipMaestro,
-      //   skipCoordinacion,
-      //   skipAsistencia,
-      //   opcionalMaestro,
-      // } = deportePayload;
+      const partido = await this.database.obtenerUno(id_partido);
 
-      // if (!skipMaestro || opcionalMaestro) {
-      // }
-
-      // // {
-      // //   id: 1,
-      // //   nombre: 'Futbol',
-      // //   descripcion: 'Hombres detras de una pelota',
-      // //   limiteJugadores: 1,
-      // //   limiteJugadoresCambio: 1,
-      // //   id_tipoDeporte: 1,
-      // //   tipoDeporte: {
-      // //     id: 1,
-      // //     nombre: 'Cancha Regulada',
-      // //     descripcion:
-      // //       'Para solicitar un partido de este tipo de deportes deben pasar por coordinacion y un maestro debera cuidarlos',
-      // //     skipMaestro: false,
-      // //     skipCoordinacion: false,
-      // //     skipAsistencia: false,
-      // //     opcionalMaestro: false
-      // //
       const id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
-      const MappedJugadores = jugadores.map((jugador) => {
-        return { ...jugador, id_partido: id_partido };
+
+      const filteredjugadores = jugadores.filter((jugador) => {
+        return jugador.estado !== null;
       });
 
-      const payload = await usuariosPartidos.crearMuchos(MappedJugadores);
+      const mappedJugadores = filteredjugadores.map((jugador) => ({
+        esReserva: jugador.estado === "titular" ? false : true,
+        id_usuario: jugador.id,
+        id_equipo: partido.id_equipo_visitante,
+        id_partido: parseInt(id_partido),
+      }));
+
+      const payload = await usuariosPartidos.crearMuchos(mappedJugadores);
 
       const partido_actualizado = await this.database.actualizarUno(
         { id_estado: id_estado },
@@ -170,6 +169,38 @@ class PartidoService extends Service {
       );
 
       return { ...partido_actualizado };
+    } catch (error) {
+      throw error;
+    }
+  };
+  obtenerMiembrosPartido = async ({ id, usuario }) => {
+    try {
+      const partidos = await this.database.obtenerMiembrosPartido(id);
+      const { equipo_visitante } = partidos;
+
+      if (equipo_visitante.id_lider !== usuario.id)
+        return { error: "Acceso denegado bro" };
+
+      const plantillaEquipoLocal = partidos.usuarios;
+
+      const equipo_visitante_miembros = miembrosEquipo({
+        data: equipo_visitante,
+      });
+
+      const jugadoresValidos = equipo_visitante_miembros.map((usuario) => {
+        const idUsuario = usuario.id;
+        const jugadorUsado = plantillaEquipoLocal.some(
+          (item) => item.id_usuario === idUsuario
+        );
+
+        return {
+          ...usuario,
+          jugadorYaUsado: jugadorUsado,
+          estado: null,
+        };
+      });
+
+      return jugadoresValidos;
     } catch (error) {
       throw error;
     }

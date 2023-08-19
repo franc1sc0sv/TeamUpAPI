@@ -55,6 +55,33 @@ class PartidoDB extends Database {
     }
   };
 
+  obtenerMiembrosPartido = async (id) => {
+    try {
+      const payload = await prisma[this.tabla].findFirst({
+        where: { id: parseInt(id) },
+        include: {
+          usuarios: true,
+          equipo_visitante: {
+            select: {
+              id: true,
+              id_lider: true,
+              lider: true,
+              usuarios: {
+                select: {
+                  usuarios: true,
+                },
+              },
+            },
+          },
+          estado: true,
+        },
+      });
+      return payload;
+    } catch (error) {
+      throw { status: "FAILED", data: { error: error?.message || error } };
+    }
+  };
+
   //Mi DB :)
   obtenerPartidosPorUsuario = async (id_usuario) => {
     try {
@@ -195,7 +222,7 @@ class PartidoDB extends Database {
       const partidos = await prisma.partidos.findMany({
         where: {
           id_usuarioMaestro,
-          id_estado: __ESTADOS_PARTIDOS__.EnJuego.id
+          id_estado: __ESTADOS_PARTIDOS__.EnJuego.id,
           // fecha: { gte: new Date() },
         },
         select: partidoSelect,
@@ -240,7 +267,7 @@ class PartidoDB extends Database {
   enviarResultados = async (data, id_estado) => {
     try {
       const resultado = await prisma.partidoResultado.create({
-        data
+        data,
       });
 
       await prisma.partidos.update({
@@ -248,8 +275,8 @@ class PartidoDB extends Database {
           id: data.id_partido,
         },
         data: {
-          id_estado
-        }
+          id_estado,
+        },
       });
       return resultado;
     } catch (error) {
@@ -265,7 +292,7 @@ const Partido = new PartidoDB("Partidos", {
   estado: true,
   usuarioMaestro: true,
   ZonaDejuego: true,
-  resultado: true
+  resultado: true,
 });
 
 export { Partido };

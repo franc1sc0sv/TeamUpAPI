@@ -7,6 +7,18 @@ import { esLiderDeEquipo } from "../middleware/esLiderDeEquipo.js";
 export const partidoRouter = Router();
 
 partidoRouter.post(
+  "/estudiante/rival/aceptar/:id",
+  autentifiacion(__ROL__.ESTUDIANTE),
+  partidoControlador.aceptarSolicitudRival
+);
+
+partidoRouter.get(
+  "/miembros/:id",
+  autentifiacion(__ROL__.ESTUDIANTE),
+  partidoControlador.obtenerMiembrosPartido
+);
+
+partidoRouter.post(
   "/enviar-resultado/:id",
   autentifiacion(__ROL__.TODOS),
   partidoControlador.enviarResultados
@@ -76,7 +88,6 @@ partidoRouter.get(
   autentifiacion(__ROL__.ESTUDIANTE),
   partidoControlador.cancelarPartido
 );
-
 
 partidoRouter
   .route("/:id")
