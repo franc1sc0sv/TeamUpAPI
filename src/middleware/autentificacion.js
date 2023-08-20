@@ -20,6 +20,7 @@ const autentifiacion = (authorizedUsers) => {
         if (authorizedUsers.includes(usuarioEncontradoPorId.role)) {
           req.usuario = usuarioEncontradoPorId;
           delete req.usuario.password;
+          delete req.usuario.token;
           return next();
         }
 

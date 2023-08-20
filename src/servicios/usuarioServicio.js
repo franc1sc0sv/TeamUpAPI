@@ -1,6 +1,8 @@
 import { Service } from "../clases/Servicios.js";
 import { usuario } from "../db/usuario.js";
 import bcrypt from "bcrypt";
+import { generarId } from "../helper/generarId.js";
+import { restaurarContraseñaMailer } from "../helper/email.js";
 
 class UsuarioService extends Service {
   crearCuentaEstudiante = async (data) => {
@@ -16,6 +18,7 @@ class UsuarioService extends Service {
 
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
+      data.token = generarId();
 
       const nuevoUsuario = this.database.crear(data);
       return nuevoUsuario;
@@ -34,6 +37,8 @@ class UsuarioService extends Service {
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
       data.role = "MAESTRO";
+      data.token = generarId();
+
       const nuevoUsuario = this.database.crear(data);
 
       return nuevoUsuario;
@@ -96,7 +101,6 @@ class UsuarioService extends Service {
   obtenerUsuarios = async () => {
     try {
       const payload = await this.database.obtenerUsuarios();
-      
       return payload;
     } catch (error) {
       throw error;
@@ -105,9 +109,7 @@ class UsuarioService extends Service {
   obtenerUnUsuario = async (id) => {
     try {
       const payload = await this.database.obtenerUnUsuario(id);
-
       if (!payload) return { error: "El usuario no existe" };
-
 
       return payload;
     } catch (error) {
@@ -116,11 +118,55 @@ class UsuarioService extends Service {
   };
   obtenerMaestros = async () => {
     try {
-      
       const payload = await usuario.obtenerMaestros();
-      
-      return payload;
 
+      return payload;
+    } catch (error) {
+      throw error;
+    }
+  };
+  restaurarContraseña = async (data) => {
+    try {
+      const usuario = await this.database.encontrarPorObjeto({
+        email: data.email,
+      });
+
+      if (!usuario) return { error: "El usuario no existe" };
+
+      await restaurarContraseñaMailer({ usuario });
+
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+  changePassword = async (data) => {
+    try {
+      const { token, password, confirm_password } = data;
+
+      const usuario = await this.database.encontrarPorObjeto({ token: token });
+
+      if (!usuario) return { error: "El token es invalido" };
+
+      if (password !== confirm_password)
+        return { error: "Las contraseñas no coinciden" };
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const newToken = generarId();
+
+      const { id } = usuario;
+
+      const mappedData = {
+        token: newToken,
+        password: hashedPassword,
+      };
+
+      const payload = await this.database.actualizarUno(mappedData, id);
+      delete payload.token;
+      delete payload.password;
+
+      return payload;
     } catch (error) {
       throw error;
     }

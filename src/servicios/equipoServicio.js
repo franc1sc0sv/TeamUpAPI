@@ -4,6 +4,7 @@ import { usuariosEquipos } from "../db/usuariosEquipos.js";
 import bcrypt from "bcrypt";
 import fs from "fs";
 import sharp from "sharp";
+import { generarId } from "../helper/generarId.js";
 
 const BASE_URL_IMAGES = "uploads/avatars/";
 const DEFAULT_IMAGE_URL = "uploads/default/defaultAvatar.png";
@@ -25,6 +26,8 @@ class EquipoService extends Service {
         avatar_url: DEFAULT_IMAGE_URL,
         password_access: hashedPassword,
         id_lider: usuario.id,
+        password_token: generarId(),
+        invitaciones_token: generarId(),
       };
 
       const payload = await this.database.crear(mappedData);
@@ -224,13 +227,15 @@ class EquipoService extends Service {
     try {
       const equipoEncontrado = await equipo.buscarEquipo(nombre);
 
-      equipoEncontrado.usuarios = equipoEncontrado.usuarios.map(usuario => usuario.usuarios)
+      equipoEncontrado.usuarios = equipoEncontrado.usuarios.map(
+        (usuario) => usuario.usuarios
+      );
 
       return equipoEncontrado;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 }
 
 const equipoServicio = new EquipoService(equipo);
