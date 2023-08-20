@@ -131,6 +131,7 @@ model Partidos {
   id_equipo_local     Int
   id_equipo_visitante Int
   id_zona_juego       Int?
+  maestro_intermediario Boolean @default(true)
 
   resultado        PartidoResultado?
   estado           PartidosEstado     @relation(fields: [id_estado], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -145,17 +146,18 @@ model Partidos {
 model PartidoResultado {
   id                           Int @id @default(autoincrement())
   id_partido                   Int @unique
-  id_usuario_resultadoAceptar  Int
-  id_usuario_resultadoPublicar Int
+  id_usuario_resultadoAceptar  Int?
+  id_usuario_resultadoPublicar Int?
 
   resultado_local     Int
   resultado_visitante Int
   confirmado          Boolean @default(false)
+  enviadoListo Boolean @default(false)
 
   partido Partidos @relation(fields: [id_partido], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  usuarioResultadoAceptar  Usuarios @relation("usuarioResultadoAceptar", fields: [id_usuario_resultadoAceptar], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  usuarioResultadoPublicar Usuarios @relation("usuarioResultadoPublicar", fields: [id_usuario_resultadoPublicar], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarioResultadoAceptar  Usuarios? @relation("usuarioResultadoAceptar", fields: [id_usuario_resultadoAceptar], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarioResultadoPublicar Usuarios? @relation("usuarioResultadoPublicar", fields: [id_usuario_resultadoPublicar], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model UsuariosPartidos {

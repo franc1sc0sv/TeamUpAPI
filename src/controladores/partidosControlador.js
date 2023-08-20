@@ -63,10 +63,12 @@ class PartidoController extends Controller {
       const jugadores = jugadoresraw.map((jugador) =>
         solicitudJugadoresEsquema.parse(jugador)
       );
+      
       const payload = await this.service.aceptarSolicitudRival({
         jugadores,
         id_partido,
       });
+
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
       console.log(error);
@@ -372,7 +374,7 @@ class PartidoController extends Controller {
   colocarAsistencia = async (req, res) => {
     try {
       const { id } = req.params;
-      const partido = await partidoServicio.colocarAsistencia(id);
+      const partido = await partidoServicio.colocarAsistencia(id,req.usuario);
       return res.status(200).json(goodResponse(partido));
     } catch (error) {
       return res.status(400).json(errorJSON(error));
@@ -382,7 +384,7 @@ class PartidoController extends Controller {
   cancelarPartido = async (req, res) => {
     try {
       const { id } = req.params;
-      const partido = await partidoServicio.cancelarPartido(id);
+      const partido = await partidoServicio.cancelarPartido(id,req.usuario);
       return res.status(200).json(goodResponse(partido));
     } catch (error) {
       return res.status(400).json(errorJSON(error));
@@ -399,8 +401,9 @@ class PartidoController extends Controller {
         {
           ...datos,
           id_partido: +id,
+          enviadoListo: true,
         },
-        req.usuario.role
+        req.usuario
       );
 
       return res.status(200).json(goodResponse(resultados));
@@ -410,6 +413,26 @@ class PartidoController extends Controller {
         return;
       }
       return res.status(400).json(errorJSON("Hubo un error"));
+    }
+  };
+
+  aceptarResultados = async (req,res) => {
+    try {
+      const {id} = req.params
+      const partido = await partidoServicio.aceptarResultados(+id, req.usuario);
+      return res.status(200).json(goodResponse(partido));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error))
+    }
+  };
+
+  cancelarResultado = async (req,res) => {
+    try {
+      const {id} = req.params
+      const partido = await partidoServicio.cancelarResultado(+id, req.usuario);
+      return res.status(200).json(goodResponse(partido));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error))
     }
   };
 }

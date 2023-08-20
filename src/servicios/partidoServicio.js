@@ -27,7 +27,7 @@ const validarFecha = (stringFecha) => {
   }
 };
 import { __ROL__ } from "../constantes/roles.js";
-import { partidosEquiposLiderSelect } from "../querys/partidos.js";
+import { partidoSelect, partidosEquiposLiderSelect } from "../querys/partidos.js";
 
 const miembrosEquipo = ({ data }) => {
   const { usuarios } = data;
@@ -121,6 +121,7 @@ class PartidoService extends Service {
         usuarios: {
           create: [...mappedJugadores],
         },
+        maestro_intermediario
       };
 
       const payload = await this.database.crear(mappedData);
@@ -132,9 +133,14 @@ class PartidoService extends Service {
   };
   aceptarSolicitudRival = async ({ jugadores, id_partido }) => {
     try {
-      const partido = await this.database.obtenerUno(id_partido);
+      const partido = await prisma.partidos.findFirst({where: {id: +id_partido}})
+      
+      
+      let id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
 
-      const id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
+      if(!partido.maestro_intermediario){
+        id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id
+      }
 
       const filteredjugadores = jugadores.filter((jugador) => {
         return jugador.estado !== null;
@@ -454,9 +460,18 @@ class PartidoService extends Service {
     }
   };
 
-  colocarAsistencia = async (id) => {
+  colocarAsistencia = async (id,usuario) => {
     try {
-      const partidos = await Partido.colocarAsistencia(id);
+      const partidos = await Partido.colocarAsistencia(id, usuario);
+      return partidos;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  cancelarPartido = async (id,usuario) => {
+    try {
+      const partidos = await Partido.cancelarPartido(id,usuario);
 
       return partidos;
     } catch (error) {
@@ -464,44 +479,58 @@ class PartidoService extends Service {
     }
   };
 
-  cancelarPartido = async (id) => {
+  enviarResultados = async (data, usuario) => {
     try {
-      const partidos = await Partido.cancelarPartido(id);
+      //Datos con los resultados de los equipos nomas
+      let partidoResultadoDatos = data;
 
-      return partidos;
-    } catch (error) {
-      throw error;
-    }
-  };
+      const rol = usuario.role;
 
-  enviarResultados = async (data, rol) => {
-    try {
       //Obtener todos los datos del partido
       const partido = await prisma.partidos.findFirst({
         where: { id: data.id_partido },
         select: partidosEquiposLiderSelect,
       });
 
-      //Obtener id del usuario lider local que propone resultado
-      const id_usuario_resultadoPublicar = partido.equipo_local.lider.id;
-      //Obtener id del usuario lider visitante que aceptar
-      const id_usuario_resultadoAceptar = partido.equipo_visitante.lider.id;
-
       let partidoEstado = __ESTADOS_PARTIDOS__.EnJuego.id;
+
+      if (rol == __ROL__.ESTUDIANTE) {
+        //Obtener id del usuario lider local que propone resultado
+        const id_usuario_resultadoPublicar = partido.equipo_local.lider.id;
+
+        //Obtener id del usuario lider visitante que aceptar
+        const id_usuario_resultadoAceptar = partido.equipo_visitante.lider.id;
+
+        partidoResultadoDatos = {
+          id_usuario_resultadoAceptar,
+          id_usuario_resultadoPublicar,
+          ...partidoResultadoDatos,
+        };
+      }
 
       if (rol == __ROL__.MAESTRO) {
         partidoEstado = __ESTADOS_PARTIDOS__.Finalizado.id;
       }
-
-      const resultado = await Partido.enviarResultados(
-        {
-          id_usuario_resultadoAceptar,
-          id_usuario_resultadoPublicar,
-          ...data,
-        },
-        partidoEstado
-      );
+      const resultado = await Partido.enviarResultados(partidoResultadoDatos,partidoEstado,partido);
       return resultado;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  aceptarResultados = async (id_partido,usuario) => {
+    try {
+      const partido = await Partido.aceptarResultados(id_partido, usuario);
+      return partido;
+    } catch (error) {
+      throw error
+    }
+  };
+
+  cancelarResultado = async (id_partido, usuario) => {
+    try {
+      const partido = await Partido.cancelarResultado(id_partido, usuario)
+      return partido
     } catch (error) {
       throw error;
     }

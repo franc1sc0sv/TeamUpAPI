@@ -16,6 +16,7 @@ export const partidoSelect = {
       imagenes: true,
     },
   },
+  resultado: true
 };
 
 export const partidosPendientes = {
@@ -66,6 +67,7 @@ export const misPartidosWhere = (equipos_ids, id_usuario) => ({
 });
 
 export const partidosEquiposLiderSelect = {
+  id: true,
   equipo_local: {
     select: {
       lider: true,
@@ -76,4 +78,5 @@ export const partidosEquiposLiderSelect = {
       lider: true,
     },
   },
+  resultado: true
 };

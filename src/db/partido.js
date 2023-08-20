@@ -222,7 +222,10 @@ class PartidoDB extends Database {
       const partidos = await prisma.partidos.findMany({
         where: {
           id_usuarioMaestro,
-          id_estado: __ESTADOS_PARTIDOS__.EnJuego.id,
+          OR: [
+            { id_estado: __ESTADOS_PARTIDOS__.PendienteAsistencia.id },
+            { id_estado: __ESTADOS_PARTIDOS__.EnJuego.id },
+          ],
           // fecha: { gte: new Date() },
         },
         select: partidoSelect,
@@ -235,10 +238,20 @@ class PartidoDB extends Database {
     }
   };
 
-  colocarAsistencia = async (id) => {
+  colocarAsistencia = async (id, usuario) => {
     try {
+      const partidoActualizar = await prisma.partidos.findFirst({
+        where: {
+          id: +id,
+          OR: [
+            { id_usuarioMaestro: usuario.id },
+            { equipo_local: { id_lider: usuario.id } },
+          ],
+        },
+      });
+
       const partido = await prisma.partidos.update({
-        where: { id: +id },
+        where: { id: partidoActualizar.id },
         data: {
           id_estado: __ESTADOS_PARTIDOS__.EnJuego.id,
         },
@@ -249,10 +262,23 @@ class PartidoDB extends Database {
       throw error;
     }
   };
-  cancelarPartido = async (id) => {
+  cancelarPartido = async (id, usuario) => {
     try {
+      const partidoActualizar = await prisma.partidos.findFirst({
+        where: {
+          id: +id,
+          OR: [
+            { id_usuarioMaestro: usuario.id },
+            { equipo_local: { id_lider: usuario.id } },
+          ],
+        },
+      });
+
       const partido = await prisma.partidos.update({
-        where: { id: +id },
+        where: {
+          id: partidoActualizar.id,
+        },
+
         data: {
           id_estado: __ESTADOS_PARTIDOS__.Cancelado.id,
         },
@@ -260,26 +286,92 @@ class PartidoDB extends Database {
 
       return partido;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
 
-  enviarResultados = async (data, id_estado) => {
+  enviarResultados = async (data, id_estado, partido) => {
     try {
-      const resultado = await prisma.partidoResultado.create({
-        data,
-      });
+      let resultado;
 
-      await prisma.partidos.update({
-        where: {
-          id: data.id_partido,
-        },
-        data: {
-          id_estado,
-        },
-      });
+      if (!partido.resultado) {
+        resultado = await prisma.partidoResultado.create({
+          data,
+        });
+
+        await prisma.partidos.update({
+          where: {
+            id: data.id_partido,
+          },
+          data: {
+            id_estado,
+          },
+        });
+      }
+
+      if (!resultado) {
+        resultado = await prisma.partidoResultado.update({
+          where: {
+            id_partido: partido.id,
+          },
+          data,
+        });
+      }
+
       return resultado;
     } catch (error) {
+      throw error;
+    }
+  };
+
+  aceptarResultados = async (id_partido) => {
+    try {
+      await prisma.partidoResultado.update({
+        where: {
+          id_partido: +id_partido,
+        },
+        data: {
+          confirmado: true,
+        },
+      });
+
+      const partido = await prisma.partidos.update({
+        where: { id: +id_partido },
+        data: {
+          id_estado: __ESTADOS_PARTIDOS__.Finalizado.id,
+        },
+        select: partidoSelect,
+      });
+      return partido;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  cancelarResultado = async (id_partido, usuario) => {
+    try {
+      const partido = await prisma.partidos.findFirst({
+        where: { id: +id_partido },
+        select: partidoSelect,
+      });
+
+      await prisma.partidoResultado.update({
+        where: {
+          id_partido: +id_partido,
+          id_usuario_resultadoAceptar: usuario.id,
+        },
+        data: {
+          id_usuario_resultadoAceptar:partido.resultado.id_usuario_resultadoPublicar,
+          id_usuario_resultadoPublicar:usuario.id,
+          enviadoListo: false,
+        },
+      });
+
+      return partido;
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   };

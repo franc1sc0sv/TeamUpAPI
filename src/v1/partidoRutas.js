@@ -6,6 +6,17 @@ import { esLiderDeEquipo } from "../middleware/esLiderDeEquipo.js";
 
 export const partidoRouter = Router();
 
+partidoRouter.get(
+  "/estudiante/aceptar-resultado/:id",
+  autentifiacion(__ROL__.ESTUDIANTE),
+  partidoControlador.aceptarResultados
+);
+partidoRouter.get(
+  "/estudiante/cancelar-resultado/:id",
+  autentifiacion(__ROL__.ESTUDIANTE),
+  partidoControlador.cancelarResultado
+);
+
 partidoRouter.post(
   "/estudiante/rival/aceptar/:id",
   autentifiacion(__ROL__.ESTUDIANTE),
@@ -25,13 +36,13 @@ partidoRouter.post(
 );
 
 partidoRouter.get(
-  "/maestro/asistencia/:id",
-  autentifiacion(__ROL__.MAESTRO),
+  "/asistencia/:id",
+  autentifiacion(__ROL__.TODOS),
   partidoControlador.colocarAsistencia
 );
 partidoRouter.get(
-  "/maestro/cancelar/:id",
-  autentifiacion(__ROL__.MAESTRO),
+  "/cancelar/:id",
+  autentifiacion(__ROL__.TODOS),
   partidoControlador.cancelarPartido
 );
 

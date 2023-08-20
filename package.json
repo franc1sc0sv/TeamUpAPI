@@ -2,11 +2,11 @@
   "name": "teampupapi",
   "version": "1.0.0",
   "description": "TeamUpAPI",
-  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.js",
-    "start": "node ./src/index.js"
+    "build": " json -I -f package.json -e this.type='' && webpack",
+    "dev": "json -I -f package.json -e this.type='module'  && nodemon ./src/index.js",
+    "start": "json -I -f package.json -e this.type='commonjs' && node api-build.js"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +23,12 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "esm": "^3.2.25",
     "nodemon": "^2.0.22",
-    "prisma": "^5.0.0"
-  }
+    "path": "^0.12.7",
+    "prisma": "^5.0.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "type": "commonjs"
 }

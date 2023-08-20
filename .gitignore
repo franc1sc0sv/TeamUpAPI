@@ -6,3 +6,7 @@ node_modules
 uploads/avatars/*
 uploads/zonaJuegos/*
 !uploads/default/
+
+#Build
+api-build.js
+api-build.js.*
