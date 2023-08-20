@@ -74,10 +74,12 @@ export const __TIPOS_DEPORTES__ = {
       "Para solicitar un partido de este tipo de deportes deben pasar por coordinacion y un maestro debera cuidarlos",
   },
 
-  NoRegulado: {
+  SinCancha: {
     id: 2,
-    nombre: "No Regulado",
+    nombre: "Sin Cancha",
     descripcion:
-      "No hay personas que supervisen los partidos de estos deportes y las solicitudes no pasan por coordinacion ni por los maestros, pero los usuarios pueden tener un maestro si lo desean",
-  },
+      "Es opcional las personas que supervisen los partidos de estos deportes y las solicitudes no pasan por coordinacion ni por los maestros, pero los usuarios pueden tener un maestro si lo desean",
+    skipCoordinacion: true,
+    opcionalMaestro: true
+    },
 };

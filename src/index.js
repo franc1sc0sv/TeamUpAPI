@@ -44,7 +44,7 @@ app.use(BASE_URL + "/partidos", partidoRouter);
 
 //Default route
 app.get("/", (req, res) => {
-  res.send("Welcome to TeamUp API - Lisening at: " + PORT);
+  res.send("Welcome to TeamUp API");
 });
 
 //Initialize server
@@ -52,13 +52,13 @@ app.listen(PORT, () => {
   console.log("Lisening at: " + PORT);
 });
 
+console.log(process.env.EMAIL_DOMAIN_RESTRICT);
+
+
 //Insertar data para por defecto
-
 const prisma = new PrismaClient();
-
 const arrayEstadosPartidos = Object.values(__ESTADOS_PARTIDOS__);
 const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
-
 //Crear datos por defecto
 !(async function () {
   try {
@@ -93,6 +93,7 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
     const coordinador = await prisma.usuarios.findFirst({
       where: { role: "COORDINADOR" },
     });
+
     if (!coordinador) {
       console.log("Coordinador creado !");
       const salt = await bcrypt.genSalt(5);
@@ -100,7 +101,7 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
 
       await prisma.usuarios.create({
         data: {
-          email: "coordinador@cdb.edu.sv",
+          email: "coordinacion@cdb.edu.sv",
           password,
           id_nivelAcademico: 1,
           nombre: "Juan",

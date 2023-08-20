@@ -29,7 +29,6 @@ model TipoDeporte {
 
   skipMaestro      Boolean @default(false)
   skipCoordinacion Boolean @default(false)
-  skipAsistencia   Boolean @default(false)
 
   opcionalMaestro Boolean @default(false)
 

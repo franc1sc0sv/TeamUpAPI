@@ -1,8 +1,11 @@
 import z from "zod";
 
 const esDominioEspecifico = (email) => {
-  const dominioEspecifico = "cdb.edu.sv";
-  return email.endsWith(`@${dominioEspecifico}`);
+
+  console.log("--------------------",process.env.EMAIL_DOMAIN_RESTRICT)
+  if(!process.env.EMAIL_DOMAIN_RESTRICT) return true
+
+  return email.endsWith(`@${process.env.EMAIL_DOMAIN}`);
 };
 
 const usuarioEsquema = z.object({
@@ -19,7 +22,7 @@ const usuarioEsquema = z.object({
     .string({ required_error: "La contraseña debe ser un string" })
     .nonempty("La contraseña no debe estar vacio")
     .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
-  id_nivelAcademico: z.string().regex(/^\d+$/).transform(Number).or(z.number()),
+  id_nivelAcademico: z.string({required_error: 'Selecciona el nivel academico'}).regex(/^\d+$/).transform(Number).or(z.number({required_error: "Selecciona el nivel academico"})),
 });
 
 const usuarioLogeoEsquema = z.object({

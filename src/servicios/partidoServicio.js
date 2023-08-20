@@ -14,20 +14,29 @@ const validarFecha = (stringFecha) => {
   const fecha = new Date(stringFecha);
   const fechaActual = new Date();
 
-  const horaInicio = new Date();
-  horaInicio.setHours(6, 50, 0); // 6:50 AM
+  console.log(fechaActual,fecha)
 
-  const horaFin = new Date();
-  horaFin.setHours(18, 0, 0); // 6:00 PM
+  //Si la fecha es de ayer
+  if (fechaActual > fecha) return { error: "La fecha debe ser actual!" };
 
-  if (fecha > fechaActual && fecha >= horaInicio && fecha <= horaFin) {
-    return true;
+  const horaMinuto = fecha.getHours() + (fecha.getMinutes()/100)
+  
+  if (horaMinuto >= 6 && horaMinuto <= 16) {
+    return {
+      error:
+        "Formato invalido de fecha o no se encuentra entre las 6AM y las 6PM",
+    };
   } else {
     return false;
   }
 };
+
+
 import { __ROL__ } from "../constantes/roles.js";
-import { partidoSelect, partidosEquiposLiderSelect } from "../querys/partidos.js";
+import {
+  partidoSelect,
+  partidosEquiposLiderSelect,
+} from "../querys/partidos.js";
 
 const miembrosEquipo = ({ data }) => {
   const { usuarios } = data;
@@ -62,15 +71,11 @@ class PartidoService extends Service {
       });
 
       if (!equipoPayload)
-        return {
+        throw {
           error: "El usuario no es lider del equipo",
         };
 
-      if (validarFecha(fecha))
-        return {
-          error:
-            "Formato invalido de fecha o no se encuentra entre las 6AM y las 6PM",
-        };
+      if (validarFecha(fecha)) throw validarFecha(fecha);
 
       const { id_lider } = equipoPayload;
 
@@ -121,7 +126,7 @@ class PartidoService extends Service {
         usuarios: {
           create: [...mappedJugadores],
         },
-        maestro_intermediario
+        maestro_intermediario,
       };
 
       const payload = await this.database.crear(mappedData);
@@ -133,13 +138,14 @@ class PartidoService extends Service {
   };
   aceptarSolicitudRival = async ({ jugadores, id_partido }) => {
     try {
-      const partido = await prisma.partidos.findFirst({where: {id: +id_partido}})
-      
-      
+      const partido = await prisma.partidos.findFirst({
+        where: { id: +id_partido },
+      });
+
       let id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
 
-      if(!partido.maestro_intermediario){
-        id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id
+      if (!partido.maestro_intermediario) {
+        id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id;
       }
 
       const filteredjugadores = jugadores.filter((jugador) => {
@@ -460,7 +466,7 @@ class PartidoService extends Service {
     }
   };
 
-  colocarAsistencia = async (id,usuario) => {
+  colocarAsistencia = async (id, usuario) => {
     try {
       const partidos = await Partido.colocarAsistencia(id, usuario);
       return partidos;
@@ -469,9 +475,9 @@ class PartidoService extends Service {
     }
   };
 
-  cancelarPartido = async (id,usuario) => {
+  cancelarPartido = async (id, usuario) => {
     try {
-      const partidos = await Partido.cancelarPartido(id,usuario);
+      const partidos = await Partido.cancelarPartido(id, usuario);
 
       return partidos;
     } catch (error) {
@@ -511,26 +517,30 @@ class PartidoService extends Service {
       if (rol == __ROL__.MAESTRO) {
         partidoEstado = __ESTADOS_PARTIDOS__.Finalizado.id;
       }
-      const resultado = await Partido.enviarResultados(partidoResultadoDatos,partidoEstado,partido);
+      const resultado = await Partido.enviarResultados(
+        partidoResultadoDatos,
+        partidoEstado,
+        partido
+      );
       return resultado;
     } catch (error) {
       throw error;
     }
   };
 
-  aceptarResultados = async (id_partido,usuario) => {
+  aceptarResultados = async (id_partido, usuario) => {
     try {
       const partido = await Partido.aceptarResultados(id_partido, usuario);
       return partido;
     } catch (error) {
-      throw error
+      throw error;
     }
   };
 
   cancelarResultado = async (id_partido, usuario) => {
     try {
-      const partido = await Partido.cancelarResultado(id_partido, usuario)
-      return partido
+      const partido = await Partido.cancelarResultado(id_partido, usuario);
+      return partido;
     } catch (error) {
       throw error;
     }
