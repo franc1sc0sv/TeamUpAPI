@@ -5,6 +5,10 @@ import { __ROL__ } from "../constantes/roles.js";
 
 const usuarioRouter = Router();
 
+usuarioRouter.route("/changePassword").post(usuarioControlador.changePassword);
+
+usuarioRouter.route("/recovery").post(usuarioControlador.restaurarContraseña);
+
 usuarioRouter
   .route("/maestro")
   .get(autentifiacion(__ROL__.COORDINADOR), usuarioControlador.obtenerMaestros)

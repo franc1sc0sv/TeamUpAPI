@@ -21,6 +21,8 @@ import {
   __TIPOS_DEPORTES__,
 } from "./constantes/datosEstaticosDB.js";
 
+import { generarId } from "./helper/generarId.js";
+
 dotenv.config();
 
 //Constants
@@ -54,7 +56,6 @@ app.listen(PORT, () => {
 
 console.log(process.env.EMAIL_DOMAIN_RESTRICT);
 
-
 //Insertar data para por defecto
 const prisma = new PrismaClient();
 const arrayEstadosPartidos = Object.values(__ESTADOS_PARTIDOS__);
@@ -82,11 +83,10 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
 
     const tiposDeportes = await prisma.tipoDeporte.findFirst();
 
-    
     if (!tiposDeportes) {
       console.log("Tipos deportes creados !");
       await prisma.tipoDeporte.createMany({
-        data: Object.entries(__TIPOS_DEPORTES__).map(deporte => deporte[1])
+        data: Object.entries(__TIPOS_DEPORTES__).map((deporte) => deporte[1]),
       });
     }
 
@@ -106,6 +106,7 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
           id_nivelAcademico: 1,
           nombre: "Juan",
           role: "COORDINADOR",
+          token: generarId(),
         },
       });
     }

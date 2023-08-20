@@ -5,6 +5,8 @@ import {
   usuarioEsquema,
   usuarioEsquemaActualizar,
   usuarioLogeoEsquema,
+  emailEsquema,
+  changePasswordEsquema,
 } from "../esquemas/usuariosEsquemas.js";
 
 import { ZodError } from "zod";
@@ -74,9 +76,10 @@ class UsuarioController extends Controller {
       const payload = await this.service.crearCuentaEstudiante(data);
 
       if (!payload) {
-        return res
-          .status(400)
-          .json({ status: "FAILED", data: { error: "El correo ya ha sido utilizado" } });
+        return res.status(400).json({
+          status: "FAILED",
+          data: { error: "El correo ya ha sido utilizado" },
+        });
       }
 
       return res.status(201).json({ status: "OK", data: payload });
@@ -143,10 +146,10 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
-  obtenerPerfil = async(req,res)=>{
-    return res.status(200).json({status: 'OK', data: req.usuario})
-  }
-  obtenerMaestros = async(req,res)=>{
+  obtenerPerfil = async (req, res) => {
+    return res.status(200).json({ status: "OK", data: req.usuario });
+  };
+  obtenerMaestros = async (req, res) => {
     try {
       const payload = await usuarioServicio.obtenerMaestros();
       return res.status(200).json({ status: "OK", data: payload });
@@ -154,8 +157,73 @@ class UsuarioController extends Controller {
       console.log(error);
       return res.status(500).json(error);
     }
-  }
-  
+  };
+  restaurarContraseña = async (req, res) => {
+    try {
+      const rawdata = req.body;
+      const data = emailEsquema.parse(rawdata);
+      const payload = await this.service.restaurarContraseña(data);
+
+      if (payload.error)
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: payload.error } });
+
+      return res.status(200).json({
+        status: "OK",
+        data: payload,
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.code && error.command) {
+        return res.status(400).json({
+          status: "FAILED",
+          data: { error: "Error al enviar el correo" },
+        });
+      }
+      if (error instanceof ZodError) {
+        const zodError = mostrarZodError(error);
+
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: zodError } });
+      }
+      return res.status(500).json(error);
+    }
+  };
+  changePassword = async (req, res) => {
+    try {
+      const rawdata = req.body;
+      const data = changePasswordEsquema.parse(rawdata);
+      const payload = await this.service.changePassword(data);
+
+      if (payload.error)
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: payload.error } });
+
+      return res.status(200).json({
+        status: "OK",
+        data: payload,
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.code && error.command) {
+        return res.status(400).json({
+          status: "FAILED",
+          data: { error: "Error al enviar el correo" },
+        });
+      }
+      if (error instanceof ZodError) {
+        const zodError = mostrarZodError(error);
+
+        return res
+          .status(400)
+          .json({ status: "FAILED", data: { error: zodError } });
+      }
+      return res.status(500).json(error);
+    }
+  };
 }
 
 const usuarioControlador = new UsuarioController(

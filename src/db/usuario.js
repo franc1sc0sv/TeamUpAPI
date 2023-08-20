@@ -17,6 +17,7 @@ class UsuarioDB extends Database {
       const payload = await prisma.usuarios.findMany({
         include: {
           nivelAcademico: true,
+          token: false,
         },
       });
       return payload;
@@ -28,7 +29,7 @@ class UsuarioDB extends Database {
     try {
       const payload = await prisma.usuarios.findFirst({
         where: { id: parseInt(id) },
-        include: { nivelAcademico: true },
+        include: { nivelAcademico: true, token: false },
       });
       return payload;
     } catch (error) {
@@ -38,9 +39,10 @@ class UsuarioDB extends Database {
   obtenerMaestros = async () => {
     try {
       const payload = await prisma.usuarios.findMany({
-        where: {role: 'MAESTRO'},
+        where: { role: "MAESTRO" },
         include: {
           nivelAcademico: true,
+          token: false,
         },
       });
       return payload;

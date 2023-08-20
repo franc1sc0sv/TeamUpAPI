@@ -51,6 +51,7 @@ model Usuarios {
   nombre   String
   email    String @unique
   password String
+  token    String @unique
 
   id_nivelAcademico Int
   nivelAcademico    NivelAcademico     @relation(fields: [id_nivelAcademico], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -97,11 +98,13 @@ model ImagenesZonaDeJuego {
 }
 
 model Equipos {
-  id              Int    @id @default(autoincrement())
-  nombre          String
-  avatar_url      String
-  password_access String
-  id_lider        Int
+  id                 Int    @id @default(autoincrement())
+  nombre             String
+  avatar_url         String
+  password_access    String
+  id_lider           Int
+  password_token     String @unique
+  invitaciones_token String @unique
 
   lider Usuarios @relation(fields: [id_lider], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -121,16 +124,16 @@ model UsuariosEquipos {
 }
 
 model Partidos {
-  id                  Int      @id @default(autoincrement())
-  descripcion         String
-  fecha               DateTime
-  id_estado           Int
-  id_usuarioMaestro   Int?
-  id_deporte          Int
-  id_equipo_local     Int
-  id_equipo_visitante Int
-  id_zona_juego       Int?
-  maestro_intermediario Boolean @default(true)
+  id                    Int      @id @default(autoincrement())
+  descripcion           String
+  fecha                 DateTime
+  id_estado             Int
+  id_usuarioMaestro     Int?
+  id_deporte            Int
+  id_equipo_local       Int
+  id_equipo_visitante   Int
+  id_zona_juego         Int?
+  maestro_intermediario Boolean  @default(true)
 
   resultado        PartidoResultado?
   estado           PartidosEstado     @relation(fields: [id_estado], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -143,15 +146,15 @@ model Partidos {
 }
 
 model PartidoResultado {
-  id                           Int @id @default(autoincrement())
-  id_partido                   Int @unique
+  id                           Int  @id @default(autoincrement())
+  id_partido                   Int  @unique
   id_usuario_resultadoAceptar  Int?
   id_usuario_resultadoPublicar Int?
 
   resultado_local     Int
   resultado_visitante Int
   confirmado          Boolean @default(false)
-  enviadoListo Boolean @default(false)
+  enviadoListo        Boolean @default(false)
 
   partido Partidos @relation(fields: [id_partido], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
