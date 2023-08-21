@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const restaurarContraseñaMailer = async ({ usuario }) => {
-  const { nombre, email, token } = usuario;
+export const restaurarContraseñaMailer = async ({ nombre, email, token }) => {
 
   const transport = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,

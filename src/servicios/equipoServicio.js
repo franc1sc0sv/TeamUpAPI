@@ -118,26 +118,15 @@ class EquipoService extends Service {
     try {
       const mappedData = { ...data };
 
-      if (mappedData.new_password_access || mappedData.old_password_access) {
-        const { new_password_access, old_password_access } = mappedData;
+      if (mappedData.new_password_access) {
+        const { new_password_access } = mappedData;
 
-        //Contraseña original del equipo
-        const { password_access } = await this.database.obtenerUno(id);
 
-        const contraseñaValida = await bcrypt.compare(
-          old_password_access,
-          password_access
-        );
-
-        if (!contraseñaValida) {
-          return { error: "Las contraseñas no coinciden" };
-        }
 
         const salt = await bcrypt.genSalt(10);
         const newHasedPassword = await bcrypt.hash(new_password_access, salt);
 
         delete mappedData.new_password_access;
-        delete mappedData.old_password_access;
 
         mappedData.password_access = newHasedPassword;
       }
@@ -175,13 +164,17 @@ class EquipoService extends Service {
       throw error;
     }
   };
-  obtenerUnEquipo = async ({ id, equiposUsuario }) => {
+  obtenerUnEquipo = async ({ id, equiposUsuario, usuario }) => {
     {
       try {
         const equipo = equiposUsuario.filter((equipo) => equipo.id === id);
-
+ 
         if (!equipo?.length) {
           return { error: "No perteneces al equipo o no existe" };
+        }
+
+        if(equipo.id_lider!=usuario.id){
+            delete equipo[0].password_token
         }
 
         return equipo[0];
@@ -236,6 +229,29 @@ class EquipoService extends Service {
       throw error;
     }
   };
+
+  unirseEquipoPorToken = async(token, usuario)=>{
+    try {
+      //Buscar si el token es valido
+      const team = await equipo.buscarEquipoPorToken(token);
+      if(!team) throw {error: "Equipo no encontrado"}
+
+      //Checar si el usuario esta en el equipo
+      const enEquipo = await equipo.estaEnEquipo(team.id, usuario.id);
+      if(enEquipo) throw {error: "Usuario ya esta en equipo"}
+      
+      //Unir al usuario al equipo
+      await equipo.unirseEquipo(team.id, usuario.id);
+
+      //Reiniciar el token de actualizacion
+      // const teamUpdated = await equipo.actualizarToken(team.id);
+      //Me arrepenti y mejor que asi quedexd
+
+      return team;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const equipoServicio = new EquipoService(equipo);

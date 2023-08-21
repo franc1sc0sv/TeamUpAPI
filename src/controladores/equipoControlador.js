@@ -10,7 +10,7 @@ import {
   eliminarMiembro,
 } from "../esquemas/equipoEsquemas.js";
 import { verificarSiEquipoJuegaMaestrosEsquema } from "../esquemas/partidoEsquemas.js";
-import { zodResponse } from "../helper/index.js";
+import { errorJSON, goodResponse, zodResponse } from "../helper/index.js";
 
 function eliminarPropiedadesVacias(objeto) {
   const nuevoObjeto = {};
@@ -236,6 +236,7 @@ class EquipoController extends Controller {
       const payload = await this.service.obtenerUnEquipo({
         id,
         equiposUsuario,
+        usuario: req.usuario
       });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
@@ -269,6 +270,17 @@ class EquipoController extends Controller {
         if(!zodResponse(res,error)){
           return res.status(400).json(error);
         }
+    }
+  }
+
+  unirseEquipoPorToken = async (req,res) => {
+    try {
+      const {token} = req.params;
+      const equipoUsuario = await equipoServicio.unirseEquipoPorToken(token, req.usuario);
+    
+      return res.status(200).json(goodResponse(equipoUsuario))
+    } catch (error) {
+      return res.status(400).json(errorJSON(error))
     }
   }
 }

@@ -1,7 +1,6 @@
 import z from "zod";
 
 const esDominioEspecifico = (email) => {
-  console.log("--------------------", process.env.EMAIL_DOMAIN_RESTRICT);
   if (!process.env.EMAIL_DOMAIN_RESTRICT) return true;
 
   return email.endsWith(`@${process.env.EMAIL_DOMAIN}`);

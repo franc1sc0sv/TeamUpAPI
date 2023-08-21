@@ -3,6 +3,7 @@ import { usuario } from "../db/usuario.js";
 import bcrypt from "bcrypt";
 import { generarId } from "../helper/generarId.js";
 import { restaurarContraseñaMailer } from "../helper/email.js";
+import { prisma } from "../config/db.js";
 
 class UsuarioService extends Service {
   crearCuentaEstudiante = async (data) => {
@@ -18,7 +19,9 @@ class UsuarioService extends Service {
 
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
-      data.token = generarId();
+      //Si no hay peticion de olvidar contraseña no es necesario
+      // data.token = generarId();
+      data.role = "ESTUDIANTE"
 
       const nuevoUsuario = this.database.crear(data);
       return nuevoUsuario;
@@ -127,13 +130,23 @@ class UsuarioService extends Service {
   };
   restaurarContraseña = async (data) => {
     try {
-      const usuario = await this.database.encontrarPorObjeto({
+
+      const { id } = await this.database.encontrarPorObjeto({
         email: data.email,
       });
 
-      if (!usuario) return { error: "El usuario no existe" };
+      const user = await prisma.usuarios.update({
+        where: {
+          id
+        },
+        data: {
+          token: generarId()
+        }
+      })
 
-      await restaurarContraseñaMailer({ usuario });
+      if (!usuario) throw { error: "El usuario no existe" };
+
+      restaurarContraseñaMailer(user);
 
       return true;
     } catch (error) {

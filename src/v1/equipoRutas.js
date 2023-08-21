@@ -13,7 +13,11 @@ export const equipoRouter = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-
+equipoRouter.get(
+  "/unirse/:token",
+  autentifiacion(__ROL__.ESTUDIANTE),
+  equipoControlador.unirseEquipoPorToken
+);
 equipoRouter.post("/buscar", equipoControlador.buscarEquipo);
 
 equipoRouter
