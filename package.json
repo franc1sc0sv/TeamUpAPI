@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": " json -I -f package.json -e this.type='' && webpack",
-    "dev": "json -I -f package.json -e this.type='module'  && nodemon ./src/index.js",
-    "start": "json -I -f package.json -e this.type='commonjs' && node api-build.js"
+    "dev": "json -I -f package.json -e this.type=\"module\"  && nodemon ./src/index.js",
+    "start": "json -I -f package.json -e this.type=\"commonjs\" && node api-build.js"
   },
   "keywords": [],
   "author": "",
+  "engines": {
+    "node": ">=16.13"
+  },
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.0.0",
@@ -32,5 +35,5 @@
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
-  "type": "module"
+  "type": ""
 }
