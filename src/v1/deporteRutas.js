@@ -5,6 +5,8 @@ import { __ROL__ } from "../constantes/roles.js";
 
 export const deporteRouter = Router();
 
+deporteRouter.get("/canchas", deporteControlador.deporteCanchas)
+
 deporteRouter
   .route("/")
   .get(deporteControlador.obtenerTodos)

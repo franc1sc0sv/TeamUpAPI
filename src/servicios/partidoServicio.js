@@ -20,8 +20,9 @@ const validarFecha = (stringFecha) => {
   if (fechaActual > fecha) return { error: "La fecha debe ser actual!" };
 
   const horaMinuto = fecha.getHours() + (fecha.getMinutes()/100)
-  
-  if (horaMinuto >= 6 && horaMinuto <= 16) {
+
+
+  if (horaMinuto <= 6 && horaMinuto >= 16) {
     return {
       error:
         "Formato invalido de fecha o no se encuentra entre las 6AM y las 6PM",

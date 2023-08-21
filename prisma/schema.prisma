@@ -5,8 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" //mysql
-  url      = "postgres://teamup:meyI7ORt8fy5n4Oorn6yKjYcF44Qy8fh@dpg-cjhc9c41ja0c73bs8heg-a.ohio-postgres.render.com/teamup_6ii1" //env("DATABASE_URL")
+  provider = "mysql"
+  url = env("DATABASE_URL")
 }
 
 // Tablas de datos predeterminados

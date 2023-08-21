@@ -184,6 +184,24 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
+  estadisticasCoordinacion = async ()=>{
+    try {
+      const estadisticas = await usuario.estadisticasCoordinacion();
+      return estadisticas;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  estadisticasEstudiante = async()=>{
+    try {
+      const estadistias = await usuario.estadisticasEstudiante();
+      return estadistias;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const usuarioServicio = new UsuarioService(usuario);

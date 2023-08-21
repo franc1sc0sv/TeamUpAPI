@@ -12,6 +12,7 @@ import {
 import { ZodError } from "zod";
 import { mostrarZodError } from "../esquemas/utils.js";
 import jwt from "jsonwebtoken";
+import { errorJSON, goodResponse } from "../helper/index.js";
 
 class UsuarioController extends Controller {
   buscarUsuarioPorCredenciales = async (req, res) => {
@@ -224,6 +225,27 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+  
+  estadisticasCoordinacion = async (req, res) => { 
+    try {
+      const estadisicas = await usuarioServicio.estadisticasCoordinacion();
+      return res.status(200).json(goodResponse(estadisicas));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error))
+    }
+   }
+
+  
+  estadisticasEstudiante = async (req, res) => { 
+    try {
+      const estadisicas = await usuarioServicio.estadisticasEstudiante();
+      return res.status(200).json(goodResponse(estadisicas));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error))
+    }
+   }
+
+  
 }
 
 const usuarioControlador = new UsuarioController(
