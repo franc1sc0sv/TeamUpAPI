@@ -4,9 +4,9 @@
   "description": "TeamUpAPI",
   "main": "index.js",
   "scripts": {
-    "build": " json -I -f package.json -e this.type='' && webpack",
-    "dev": "json -I -f package.json -e this.type=\"module\"  && nodemon ./src/index.js",
-    "start": "json -I -f package.json -e this.type=\"commonjs\" && node api-build.js"
+    "build": "webpack",
+    "dev": "nodemon ./src/index.js",
+    "start": "node api-build.js"
   },
   "keywords": [],
   "author": "",
@@ -35,5 +35,5 @@
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
-  "type": ""
+  "type": "commonjs"
 }
