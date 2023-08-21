@@ -10,3 +10,5 @@ uploads/zonaJuegos/*
 #Build
 api-build.js
 api-build.js.*
+api-build.cjs
+api-build.cjs.*

@@ -11,7 +11,7 @@ module.exports = {
     entry: './src/index.js',
     output: {
       path: resolve(__dirname),
-      filename: 'api-build.js',
+      filename: 'api-build.cjs',
     },
     externals: nodeModules,
     target: 'node',
