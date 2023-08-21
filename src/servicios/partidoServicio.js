@@ -501,7 +501,7 @@ class PartidoService extends Service {
 
       let partidoEstado = __ESTADOS_PARTIDOS__.EnJuego.id;
 
-      if (rol == __ROL__.ESTUDIANTE) {
+      if (rol == __ROL__.ESTUDIANTE && !partido.resultado) {
         //Obtener id del usuario lider local que propone resultado
         const id_usuario_resultadoPublicar = partido.equipo_local.lider.id;
 

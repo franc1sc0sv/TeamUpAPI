@@ -194,9 +194,9 @@ class UsuarioService extends Service {
     }
   }
 
-  estadisticasEstudiante = async()=>{
+  estadisticasEstudiante = async(id)=>{
     try {
-      const estadistias = await usuario.estadisticasEstudiante();
+      const estadistias = await usuario.estadisticasEstudiante(id);
       return estadistias;
     } catch (error) {
       throw error;

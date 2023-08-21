@@ -238,7 +238,7 @@ class UsuarioController extends Controller {
   
   estadisticasEstudiante = async (req, res) => { 
     try {
-      const estadisicas = await usuarioServicio.estadisticasEstudiante();
+      const estadisicas = await usuarioServicio.estadisticasEstudiante(req.usuario.id);
       return res.status(200).json(goodResponse(estadisicas));
     } catch (error) {
       return res.status(400).json(errorJSON(error))

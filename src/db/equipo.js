@@ -49,6 +49,7 @@ class EquiposDB extends Database {
               usuarios: true,
             },
           },
+          lider: true
         },
       });
 

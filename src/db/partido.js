@@ -357,14 +357,16 @@ class PartidoDB extends Database {
         select: partidoSelect,
       });
 
+      console.log(partido.resultado);
+
       await prisma.partidoResultado.update({
         where: {
           id_partido: +id_partido,
           id_usuario_resultadoAceptar: usuario.id,
         },
         data: {
-          id_usuario_resultadoAceptar:partido.resultado.id_usuario_resultadoPublicar,
-          id_usuario_resultadoPublicar:usuario.id,
+          id_usuario_resultadoAceptar: partido.resultado.id_usuario_resultadoPublicar,
+          id_usuario_resultadoPublicar: partido.resultado.id_usuario_resultadoAceptar,
           enviadoListo: false,
         },
       });

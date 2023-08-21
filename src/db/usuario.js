@@ -51,35 +51,36 @@ class UsuarioDB extends Database {
     }
   };
 
-
-  estadisticasCoordinacion = async ()=>{
+  estadisticasCoordinacion = async () => {
     try {
       const solicitudesPendientes = await prisma.partidos.count({
         where: {
-          id_estado: __ESTADOS_PARTIDOS__.PendienteCoordinacion.id
-        }
-      })
+          id_estado: __ESTADOS_PARTIDOS__.PendienteCoordinacion.id,
+        },
+      });
 
       const maestroCuidandoHoy = await prisma.partidos.count({
         where: {
           AND: [
-            {NOT: {
-              id_usuarioMaestro: null,
-            }},
+            {
+              NOT: {
+                id_usuarioMaestro: null,
+              },
+            },
             {
               fecha: {
-                gte: new Date()
-              }
-            }
-          ]
-        }
-      })
+                gte: new Date(),
+              },
+            },
+          ],
+        },
+      });
 
       const partidosRealizados = await prisma.partidos.count({
         where: {
-          id_estado: __ESTADOS_PARTIDOS__.Finalizado.id
-        }
-      })
+          id_estado: __ESTADOS_PARTIDOS__.Finalizado.id,
+        },
+      });
 
       const deportes = await prisma.deporte.findMany({
         take: 3,
@@ -88,55 +89,55 @@ class UsuarioDB extends Database {
           nombre: true,
           partidos: {
             select: {
-              id:true,
-            }
-          }
-        }
-      })
+              id: true,
+            },
+          },
+        },
+      });
 
       return {
         deportes,
         solicitudesPendientes,
         maestroCuidandoHoy,
-        partidosRealizados
-      }
+        partidosRealizados,
+      };
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw error;
     }
-  }
+  };
 
-  estadisticasEstudiante = async (id_usuario)=>{
+  estadisticasEstudiante = async (id_usuario) => {
     try {
-      const cantidadEquipos = await prisma.usuariosEquipos.count({
+      const cantidadEquipos = await prisma.equipos.count({
         where: {
-          id_usuarios: id_usuario
-        }
-      })
+          OR: [{ id_lider: +id_usuario }, { usuarios: { some: {id_usuarios: +id_usuario} } }],
+        },
+      });
 
       const partidosCompletados = await prisma.partidos.count({
         where: {
           id_estado: __ESTADOS_PARTIDOS__.Finalizado.id,
-          usuarios: {some: {id_usuario}}
-        }
-      })
+          usuarios: { some: { id_usuario } },
+        },
+      });
 
-     const solicitudesCreadas = await prisma.partidos.count({
-      where: {
-        equipo_local: {id_lider: id_usuario}
-      }
-     })
+      const solicitudesCreadas = await prisma.partidos.count({
+        where: {
+          equipo_local: { id_lider: id_usuario },
+        },
+      });
 
-     return {
-      cantidadEquipos,
-      partidosCompletados,
-      solicitudesCreadas
-     }
-
+      return {
+        cantidadEquipos,
+        partidosCompletados,
+        solicitudesCreadas,
+      };
     } catch (error) {
+      console.log(error)
       throw error;
     }
-  }
+  };
 }
 
 const usuario = new UsuarioDB("Usuarios");
