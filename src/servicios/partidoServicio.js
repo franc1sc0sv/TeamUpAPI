@@ -141,11 +141,18 @@ class PartidoService extends Service {
     try {
       const partido = await prisma.partidos.findFirst({
         where: { id: +id_partido },
+        include: {
+          deporte: {
+            include: {
+              tipoDeporte: true
+            }
+          }
+        }
       });
 
       let id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
 
-      if (!partido.maestro_intermediario) {
+      if (!partido.maestro_intermediario && partido.deporte.tipoDeporte.opcionalMaestro) {
         id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id;
       }
 
@@ -517,6 +524,10 @@ class PartidoService extends Service {
 
       if (rol == __ROL__.MAESTRO) {
         partidoEstado = __ESTADOS_PARTIDOS__.Finalizado.id;
+        partidoResultadoDatos = {
+          ...partidoResultadoDatos,
+          confirmado: true
+        }
       }
       const resultado = await Partido.enviarResultados(
         partidoResultadoDatos,

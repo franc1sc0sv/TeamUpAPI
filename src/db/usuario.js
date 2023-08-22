@@ -117,7 +117,7 @@ class UsuarioDB extends Database {
 
       const partidosCompletados = await prisma.partidos.count({
         where: {
-          id_estado: __ESTADOS_PARTIDOS__.Finalizado.id,
+          id_estado: {in: [__ESTADOS_PARTIDOS__.Finalizado.id, __ESTADOS_PARTIDOS__.Cancelado.id]},
           usuarios: { some: { id_usuario } },
         },
       });
