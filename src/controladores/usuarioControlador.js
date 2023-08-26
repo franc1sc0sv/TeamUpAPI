@@ -52,6 +52,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   actualizarDatosUsuario = async (req, res) => {
     const { id } = req.usuario;
     const rawdata = req.body;
@@ -70,6 +71,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   crearCuentaEstudiante = async (req, res) => {
     const rawdata = req.body;
     try {
@@ -96,6 +98,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   crearCuentaMaestro = async (req, res) => {
     const rawdata = req.body;
     try {
@@ -123,6 +126,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   obtenerUsuarios = async (req, res) => {
     try {
       const payload = await this.service.obtenerUsuarios();
@@ -132,6 +136,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   obtenerUnUsuario = async (req, res) => {
     try {
       const { id } = req.params;
@@ -147,9 +152,11 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   obtenerPerfil = async (req, res) => {
     return res.status(200).json({ status: "OK", data: req.usuario });
   };
+
   obtenerMaestros = async (req, res) => {
     try {
       const payload = await usuarioServicio.obtenerMaestros();
@@ -159,6 +166,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   restaurarContraseña = async (req, res) => {
     try {
       const rawdata = req.body;
@@ -192,6 +200,7 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
+
   changePassword = async (req, res) => {
     try {
       const rawdata = req.body;
@@ -225,27 +234,26 @@ class UsuarioController extends Controller {
       return res.status(500).json(error);
     }
   };
-  
-  estadisticasCoordinacion = async (req, res) => { 
+
+  estadisticasCoordinacion = async (req, res) => {
     try {
       const estadisicas = await usuarioServicio.estadisticasCoordinacion();
       return res.status(200).json(goodResponse(estadisicas));
     } catch (error) {
-      return res.status(400).json(errorJSON(error))
+      return res.status(400).json(errorJSON(error));
     }
-   }
+  };
 
-  
-  estadisticasEstudiante = async (req, res) => { 
+  estadisticasEstudiante = async (req, res) => {
     try {
-      const estadisicas = await usuarioServicio.estadisticasEstudiante(req.usuario.id);
+      const estadisicas = await usuarioServicio.estadisticasEstudiante(
+        req.usuario.id
+      );
       return res.status(200).json(goodResponse(estadisicas));
     } catch (error) {
-      return res.status(400).json(errorJSON(error))
+      return res.status(400).json(errorJSON(error));
     }
-   }
-
-  
+  };
 }
 
 const usuarioControlador = new UsuarioController(

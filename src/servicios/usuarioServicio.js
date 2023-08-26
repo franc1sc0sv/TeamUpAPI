@@ -21,7 +21,7 @@ class UsuarioService extends Service {
       data.password = await bcrypt.hash(data.password, salt);
       //Si no hay peticion de olvidar contraseña no es necesario
       // data.token = generarId();
-      data.role = "ESTUDIANTE"
+      data.role = "ESTUDIANTE";
 
       const nuevoUsuario = this.database.crear(data);
       return nuevoUsuario;
@@ -29,6 +29,7 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   crearCuentaMaestro = async (data) => {
     try {
       const { email } = data;
@@ -49,6 +50,7 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   buscarUsuarioPorCredenciales = async (datos) => {
     try {
       const { email, password } = datos;
@@ -71,6 +73,7 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   actualizarDatosUsuario = async (data, id) => {
     try {
       if (data.password) {
@@ -101,6 +104,7 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   obtenerUsuarios = async () => {
     try {
       const payload = await this.database.obtenerUsuarios();
@@ -109,6 +113,7 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   obtenerUnUsuario = async (id) => {
     try {
       const payload = await this.database.obtenerUnUsuario(id);
@@ -119,6 +124,7 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   obtenerMaestros = async () => {
     try {
       const payload = await usuario.obtenerMaestros();
@@ -128,25 +134,16 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   restaurarContraseña = async (data) => {
     try {
-
-      const { id } = await this.database.encontrarPorObjeto({
+      const usuario = await this.database.encontrarPorObjeto({
         email: data.email,
       });
 
-      const user = await prisma.usuarios.update({
-        where: {
-          id
-        },
-        data: {
-          token: generarId()
-        }
-      })
+      if (!usuario) return { error: "El usuario no existe" };
 
-      if (!usuario) throw { error: "El usuario no existe" };
-
-      restaurarContraseñaMailer(user);
+      await restaurarContraseñaMailer({ usuario });
 
       return true;
     } catch (error) {
@@ -185,23 +182,23 @@ class UsuarioService extends Service {
     }
   };
 
-  estadisticasCoordinacion = async ()=>{
+  estadisticasCoordinacion = async () => {
     try {
       const estadisticas = await usuario.estadisticasCoordinacion();
       return estadisticas;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
-  estadisticasEstudiante = async(id)=>{
+  estadisticasEstudiante = async (id) => {
     try {
       const estadistias = await usuario.estadisticasEstudiante(id);
       return estadistias;
     } catch (error) {
       throw error;
     }
-  }
+  };
 }
 
 const usuarioServicio = new UsuarioService(usuario);
