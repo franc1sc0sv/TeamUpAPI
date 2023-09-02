@@ -24,6 +24,7 @@ class UsuarioService extends Service {
       // Si no hay petición de olvidar contraseña no es necesario
       // data.token = generarId();
       data.role = "ESTUDIANTE";
+      data.token = generarId();
 
       const nuevoUsuario = this.database.crear(data);
       return nuevoUsuario;
@@ -165,7 +166,7 @@ class UsuarioService extends Service {
       if (!usuario) return { error: "token_invalido" };
 
       if (password !== confirm_password)
-        return { error: "Las contraseñas no coinciden" };
+        return { error: "contrasena_no_coincide" };
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
