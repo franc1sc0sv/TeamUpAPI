@@ -3,7 +3,6 @@ import { usuario } from "../db/usuario.js";
 import bcrypt from "bcrypt";
 import { generarId } from "../helper/generarId.js";
 import { restaurarContraseñaMailer } from "../helper/email.js";
-import { prisma } from "../config/db.js";
 
 class UsuarioService extends Service {
   crearCuentaEstudiante = async (data) => {
@@ -17,9 +16,12 @@ class UsuarioService extends Service {
         return null;
       }
 
+      data.nombre = data.nombre + " " + data.apellido;
+      delete data.apellido;
+
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
-      //Si no hay peticion de olvidar contraseña no es necesario
+      // Si no hay petición de olvidar contraseña no es necesario
       // data.token = generarId();
       data.role = "ESTUDIANTE";
 
@@ -37,6 +39,9 @@ class UsuarioService extends Service {
         email,
       });
       if (mismoUsuario) return null;
+
+      data.nombre = data.nombre + " " + data.apellido;
+      delete data.apellido;
 
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
@@ -59,14 +64,14 @@ class UsuarioService extends Service {
         email,
       });
 
-      if (!usuarioEncontrado) return { error: "Usuario no encontrado" };
+      if (!usuarioEncontrado) return { error: "usuario_no_encontrado" };
 
       const contraseñaValida = await bcrypt.compare(
         password,
         usuarioEncontrado.password
       );
 
-      if (!contraseñaValida) return { error: "Credenciales incorrectas" };
+      if (!contraseñaValida) return { error: "credenciales_incorrectas" };
 
       return usuarioEncontrado;
     } catch (error) {
@@ -117,7 +122,7 @@ class UsuarioService extends Service {
   obtenerUnUsuario = async (id) => {
     try {
       const payload = await this.database.obtenerUnUsuario(id);
-      if (!payload) return { error: "El usuario no existe" };
+      if (!payload) return { error: "usuario_no_encontrado" };
 
       return payload;
     } catch (error) {
@@ -141,7 +146,7 @@ class UsuarioService extends Service {
         email: data.email,
       });
 
-      if (!usuario) return { error: "El usuario no existe" };
+      if (!usuario) return { error: "usuario_no_encontrado" };
 
       await restaurarContraseñaMailer({ usuario });
 
@@ -150,13 +155,14 @@ class UsuarioService extends Service {
       throw error;
     }
   };
+
   changePassword = async (data) => {
     try {
       const { token, password, confirm_password } = data;
 
       const usuario = await this.database.encontrarPorObjeto({ token: token });
 
-      if (!usuario) return { error: "El token es invalido" };
+      if (!usuario) return { error: "token_invalido" };
 
       if (password !== confirm_password)
         return { error: "Las contraseñas no coinciden" };
