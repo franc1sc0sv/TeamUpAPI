@@ -121,15 +121,18 @@ class PartidoService extends Service {
         include: {
           deporte: {
             include: {
-              tipoDeporte: true
-            }
-          }
-        }
+              tipoDeporte: true,
+            },
+          },
+        },
       });
 
       let id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
 
-      if (!partido.maestro_intermediario && partido.deporte.tipoDeporte.opcionalMaestro) {
+      if (
+        !partido.maestro_intermediario &&
+        partido.deporte.tipoDeporte.opcionalMaestro
+      ) {
         id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id;
       }
 
@@ -506,8 +509,8 @@ class PartidoService extends Service {
         partidoEstado = __ESTADOS_PARTIDOS__.Finalizado.id;
         partidoResultadoDatos = {
           ...partidoResultadoDatos,
-          confirmado: true
-        }
+          confirmado: true,
+        };
       }
       const resultado = await Partido.enviarResultados(
         partidoResultadoDatos,

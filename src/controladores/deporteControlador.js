@@ -2,7 +2,7 @@ import { deporteServicio } from "../servicios/deporteServicio.js";
 import { Controller } from "../clases/Controlador.js";
 import {
   deporteEsquema,
-  deporteEsquemaActualzar,
+  deporteEsquemaActualizar,
 } from "../esquemas/deporteEsquemas.js";
 import { errorJSON, goodResponse } from "../helper/index.js";
 
@@ -21,7 +21,7 @@ class DeporteController extends Controller {
 
 const deporteControlador = new DeporteController(
   deporteEsquema,
-  deporteEsquemaActualzar,
+  deporteEsquemaActualizar,
   deporteServicio
 );
 

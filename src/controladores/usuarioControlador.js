@@ -57,7 +57,7 @@ class UsuarioController extends Controller {
     const { id } = req.usuario;
     const rawdata = req.body;
     try {
-      const data = this.zodUpdateSchema.parse(rawdata);
+      const data = usuarioEsquemaActualizar.parse(rawdata);
       const payload = await this.service.actualizarDatosUsuario(data, id);
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
@@ -75,13 +75,13 @@ class UsuarioController extends Controller {
   crearCuentaEstudiante = async (req, res) => {
     const rawdata = req.body;
     try {
-      const data = this.zodSchema.parse(rawdata);
+      const data = usuarioEsquema.parse(rawdata);
       const payload = await this.service.crearCuentaEstudiante(data);
 
       if (!payload) {
         return res.status(400).json({
           status: "FAILED",
-          data: { error: "El correo ya ha sido utilizado" },
+          data: { error: "correo_existente" },
         });
       }
 
@@ -102,13 +102,13 @@ class UsuarioController extends Controller {
   crearCuentaMaestro = async (req, res) => {
     const rawdata = req.body;
     try {
-      const data = this.zodSchema.parse(rawdata);
+      const data = usuarioEsquema.parse(rawdata);
       const payload = await this.service.crearCuentaMaestro(data);
 
       if (!payload) {
         return res
           .status(400)
-          .json({ status: "FAILED", data: { error: "El usuario ya existe" } });
+          .json({ status: "FAILED", data: { error: "usuario_existente" } });
       }
 
       return res.status(201).json({ status: "OK", data: payload });
@@ -187,7 +187,7 @@ class UsuarioController extends Controller {
       if (error.code && error.command) {
         return res.status(400).json({
           status: "FAILED",
-          data: { error: "Error al enviar el correo" },
+          data: { error: "error_correo" },
         });
       }
       if (error instanceof ZodError) {
@@ -221,7 +221,7 @@ class UsuarioController extends Controller {
       if (error.code && error.command) {
         return res.status(400).json({
           status: "FAILED",
-          data: { error: "Error al enviar el correo" },
+          data: { error: "error_correo" },
         });
       }
       if (error instanceof ZodError) {

@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 const esDominioEspecifico = (email) => {
   if (!process.env.EMAIL_DOMAIN_RESTRICT) return true;
@@ -8,69 +8,71 @@ const esDominioEspecifico = (email) => {
 
 const usuarioEsquema = z.object({
   nombre: z
-    .string({ required_error: "El nombre debe ser un string" })
-    .nonempty("El nombre no debe estar vacio"),
+    .string({ required_error: "nombre_requerido" })
+    .nonempty("nombre_vacio"),
+  apellido: z
+    .string({ required_error: "apellido_requerido" })
+    .nonempty("apellido_vacio"),
   email: z
-    .string({ required_error: "El correo debe ser un string" })
-    .email()
+    .string({ required_error: "email_requerido" })
+    .email({ message: "email_invalido" })
     .refine((email) => esDominioEspecifico(email), {
-      message: "El correo electrónico debe ser de un dominio específico",
+      message: "email_dominio_especifico",
     }),
   password: z
-    .string({ required_error: "La contraseña debe ser un string" })
-    .nonempty("La contraseña no debe estar vacio")
-    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
+    .string({ required_error: "password_requerido" })
+    .nonempty("password_vacio")
+    .min(8, { message: "password_min_length" }),
   id_nivelAcademico: z
-    .string({ required_error: "Selecciona el nivel academico" })
+    .string({ required_error: "nivel_academico_requerido" })
     .regex(/^\d+$/)
     .transform(Number)
-    .or(z.number({ required_error: "Selecciona el nivel academico" })),
+    .or(z.number({ required_error: "nivel_academico_requerido" })),
 });
 
 const emailEsquema = z.object({
   email: z
-    .string({ required_error: "El correo debe ser un string" })
-    .email()
+    .string({ required_error: "email_requerido" })
+    .email({ message: "email_invalido" })
     .refine((email) => esDominioEspecifico(email), {
-      message: "El correo electrónico debe ser de un dominio específico",
+      message: "email_dominio_especifico",
     }),
 });
 
 const changePasswordEsquema = z.object({
-  token: z.string({ required_error: "Token no valido" }),
+  token: z.string({ required_error: "token_invalido " }),
   password: z
-    .string({ required_error: "La contraseña debe ser un string" })
-    .nonempty("La contraseña no debe estar vacia")
-    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
+    .string({ required_error: "password_requerido" })
+    .nonempty("password_vacio")
+    .min(8, { message: "password_min_length" }),
   confirm_password: z
-    .string({ required_error: "La contraseña debe ser un string" })
-    .nonempty("La contraseña no debe estar vacia")
-    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
+    .string({ required_error: "password_requerido" })
+    .nonempty("password_vacio")
+    .min(8, { message: "password_min_length" }),
 });
 
 const usuarioLogeoEsquema = z.object({
   email: z
-    .string()
-    .email()
-    .nonempty()
+    .string({ required_error: "email_requerido" })
+    .email({ message: "email_invalido" })
     .refine((email) => esDominioEspecifico(email), {
-      message: "El correo electrónico debe ser de un dominio específico",
+      message: "email_dominio_especifico",
     }),
   password: z
-    .string()
-    .nonempty()
-    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" }),
+    .string({ required_error: "password_requerido" })
+    .nonempty("password_vacio")
+    .min(8, { message: "password_min_length" }),
 });
 
 const usuarioEsquemaActualizar = z.object({
   nombre: z
-    .string({ required_error: "El nombre debe ser un string" })
-    .nonempty("El nombre no debe estar vacio")
+    .string({ required_error: "nombre_requerido" })
+    .nonempty("nombre_vacio")
     .optional(),
   password: z
-    .string({ required_error: "La contraseña debe ser un string" })
-    .nonempty("La contraseña no debe estar vacio")
-    .min(8, { message: "La contraseña tiene que tener al menos 8 caracteres" })
+    .string({ required_error: "password_requerido" })
+    .nonempty("password_vacio")
+    .min(8, { message: "password_min_length" })
     .optional(),
   id_nivelAcademico: z.string().regex(/^\d+$/).transform(Number).optional(),
 });
