@@ -4,7 +4,7 @@ const zonaJuegosEsquemas = z.object({
   nombre: z
     .string({ required_error: "nombre_requerido" })
     .nonempty("nombre_vacio"),
-  id_tipoDeporte: z
+  id_deporte: z
     .string({ required_error: "id_tipoDeporte_requerido" })
     .nonempty("id_tipoDeporte_vacio")
     .regex(/^\d+$/)
@@ -17,7 +17,7 @@ const zonaJuegosEsquemasActualizar = z.object({
     .string({ required_error: "nombre_requerido" })
     .nonempty("nombre_vacio")
     .optional(),
-  id_tipoDeporte: z
+  id_deporte: z
     .string({ required_error: "id_tipoDeporte_requerido" })
     .nonempty("id_tipoDeporte_vacio")
     .regex(/^\d+$/)
