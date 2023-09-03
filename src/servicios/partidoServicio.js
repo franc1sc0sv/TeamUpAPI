@@ -14,15 +14,14 @@ const validarFecha = (stringFecha) => {
   const fecha = new Date(stringFecha);
   const fechaActual = new Date();
 
-  console.log(fechaActual,fecha)
+  console.log(fechaActual, fecha);
 
   //Si la fecha es de ayer
   if (fechaActual > fecha) return { error: "La fecha debe ser actual!" };
 
-  const horaMinuto = fecha.getHours() + (fecha.getMinutes()/100)
+  const horaMinuto = fecha.getHours() + fecha.getMinutes() / 100;
 
-
-  if (horaMinuto <= 6 && horaMinuto >= 16) {
+  if (horaMinuto <= 6 || horaMinuto >= 16) {
     return {
       error:
         "Formato invalido de fecha o no se encuentra entre las 6AM y las 6PM",
@@ -31,7 +30,6 @@ const validarFecha = (stringFecha) => {
     return false;
   }
 };
-
 
 import { __ROL__ } from "../constantes/roles.js";
 import {
@@ -144,15 +142,18 @@ class PartidoService extends Service {
         include: {
           deporte: {
             include: {
-              tipoDeporte: true
-            }
-          }
-        }
+              tipoDeporte: true,
+            },
+          },
+        },
       });
 
       let id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
 
-      if (!partido.maestro_intermediario && partido.deporte.tipoDeporte.opcionalMaestro) {
+      if (
+        !partido.maestro_intermediario &&
+        partido.deporte.tipoDeporte.opcionalMaestro
+      ) {
         id_estado = __ESTADOS_PARTIDOS__.PendienteAsistencia.id;
       }
 
@@ -526,8 +527,8 @@ class PartidoService extends Service {
         partidoEstado = __ESTADOS_PARTIDOS__.Finalizado.id;
         partidoResultadoDatos = {
           ...partidoResultadoDatos,
-          confirmado: true
-        }
+          confirmado: true,
+        };
       }
       const resultado = await Partido.enviarResultados(
         partidoResultadoDatos,

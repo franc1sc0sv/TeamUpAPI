@@ -1,29 +1,60 @@
-import z from "zod";
+import { z } from "zod";
 
-const deporteEsquema = z.object({
+export const deporteEsquema = z.object({
   nombre: z
-    .string({ required_error: "El nombre debe ser un string" })
-    .nonempty("El nombre no debe estar vacio"),
+    .string({ required_error: "nombre_requerido" })
+    .nonempty("nombre_vacio"),
   descripcion: z
-    .string({ required_error: "La descripion ser un string" })
-    .nonempty("La descripion no debe estar vacio"),
-  limiteJugadores: z.string().regex(/^\d+$/).transform(Number).or(z.number()),
-  limiteJugadoresCambio: z.string().regex(/^\d+$/).transform(Number).or(z.number()),
-  id_tipoDeporte: z.string().regex(/^\d+$/).transform(Number).or(z.number()),
+    .string({ required_error: "descripcion_requerida" })
+    .nonempty("descripcion_vacia"),
+  limiteJugadores: z
+    .string({ required_error: "limiteJugadores_requerido" })
+    .nonempty("limiteJugadores_vacio")
+    .regex(/^\d+$/)
+    .transform(Number)
+    .or(z.number({ required_error: "limiteJugadores_requerido" })),
+  limiteJugadoresCambio: z
+    .string({ required_error: "limiteJugadoresCambio_requerido" })
+    .nonempty("limiteJugadoresCambio_vacio")
+    .regex(/^\d+$/)
+    .transform(Number)
+    .or(z.number({ required_error: "limiteJugadoresCambio_requerido" })),
+  id_tipoDeporte: z
+    .string({ required_error: "id_tipoDeporte_requerido" })
+    .nonempty("id_tipoDeporte_vacio")
+    .regex(/^\d+$/)
+    .transform(Number)
+    .or(z.number({ required_error: "id_tipoDeporte_requerido" })),
 });
 
-const deporteEsquemaActualzar = z.object({
+export const deporteEsquemaActualizar = z.object({
   nombre: z
-    .string({ required_error: "El nombre debe ser un string" })
-    .nonempty("El nombre no debe estar vacio")
+    .string({ required_error: "nombre_requerido" })
+    .nonempty("nombre_vacio")
     .optional(),
   descripcion: z
-    .string({ required_error: "La descripion ser un string" })
-    .nonempty("La descripion no debe estar vacio")
+    .string({ required_error: "descripcion_requerida" })
+    .nonempty("descripcion_vacia")
     .optional(),
-  limiteJugadores: z.string().regex(/^\d+$/).transform(Number).or(z.number()).optional(),
-  limiteJugadoresCambio: z.string().regex(/^\d+$/).transform(Number).or(z.number()).optional(),
-  id_tipoDeporte: z.string().regex(/^\d+$/).transform(Number).or(z.number()).optional(),
+  limiteJugadores: z
+    .string({ required_error: "limiteJugadores_requerido" })
+    .nonempty("limiteJugadores_vacio")
+    .regex(/^\d+$/)
+    .transform(Number)
+    .or(z.number({ required_error: "limiteJugadores_requerido" }))
+    .optional(),
+  limiteJugadoresCambio: z
+    .string({ required_error: "limiteJugadoresCambio_requerido" })
+    .nonempty("limiteJugadoresCambio_vacio")
+    .regex(/^\d+$/)
+    .transform(Number)
+    .or(z.number({ required_error: "limiteJugadoresCambio_requerido" }))
+    .optional(),
+  id_tipoDeporte: z
+    .string({ required_error: "id_tipoDeporte_requerido" })
+    .nonempty("id_tipoDeporte_vacio")
+    .regex(/^\d+$/)
+    .transform(Number)
+    .or(z.number({ required_error: "id_tipoDeporte_requerido" }))
+    .optional(),
 });
-
-export { deporteEsquema, deporteEsquemaActualzar };
