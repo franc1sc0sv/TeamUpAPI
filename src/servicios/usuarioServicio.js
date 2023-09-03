@@ -24,7 +24,6 @@ class UsuarioService extends Service {
       // Si no hay petición de olvidar contraseña no es necesario
       // data.token = generarId();
       data.role = "ESTUDIANTE";
-      data.token = generarId();
 
       const nuevoUsuario = this.database.crear(data);
       return nuevoUsuario;
