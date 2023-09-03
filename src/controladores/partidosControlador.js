@@ -327,7 +327,7 @@ class PartidoController extends Controller {
       if (zodResponse(res, error)) {
         return;
       }
-      return res.status(400).json(errorJSON(error));
+      return res.status(400).json(error);
     }
   };
 

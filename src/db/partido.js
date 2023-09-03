@@ -270,6 +270,7 @@ class PartidoDB extends Database {
           OR: [
             { id_usuarioMaestro: usuario.id },
             { equipo_local: { id_lider: usuario.id } },
+            { equipo_visitante: { id_lider: usuario.id } },
           ],
         },
       });

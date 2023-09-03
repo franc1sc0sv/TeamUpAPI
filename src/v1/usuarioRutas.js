@@ -5,6 +5,8 @@ import { __ROL__ } from "../constantes/roles.js";
 
 const usuarioRouter = Router();
 
+
+usuarioRouter.get("/verificar-token/:token", usuarioControlador.verificarToken)
 usuarioRouter.get(
   "/estadisticas-coordinacion",
   autentifiacion(__ROL__.COORDINADOR),

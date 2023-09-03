@@ -106,6 +106,7 @@ class EquipoService extends Service {
         id_equipo: id,
         id_usuarios: id_lider,
       };
+      
       await usuariosEquipos.crear(newMiembrEquipoData);
 
       const payload = await this.database.actualizarUno(data, id);

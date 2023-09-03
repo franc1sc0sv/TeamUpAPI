@@ -244,6 +244,17 @@ class UsuarioController extends Controller {
     }
   };
 
+  verificarToken = async (req,res) => { 
+    try {
+      await usuarioServicio.verificarToken(req.params.token ?? '');
+      
+      return res.status(200).json(goodResponse({message: "Token Valido !"}))
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json(errorJSON({message: "Token invalido"}))
+    }
+   }
+
   estadisticasEstudiante = async (req, res) => {
     try {
       const estadisicas = await usuarioServicio.estadisticasEstudiante(

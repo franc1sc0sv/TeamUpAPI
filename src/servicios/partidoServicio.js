@@ -9,35 +9,12 @@ import {
 import { prisma } from "../config/db.js";
 import { deporte } from "../db/deporte.js";
 import { usuariosEquipos } from "../db/usuariosEquipos.js";
-
-const validarFecha = (stringFecha) => {
-  const fecha = new Date(stringFecha);
-  const fechaActual = new Date();
-
-  console.log(fechaActual,fecha)
-
-  //Si la fecha es de ayer
-  if (fechaActual > fecha) return { error: "La fecha debe ser actual!" };
-
-  const horaMinuto = fecha.getHours() + (fecha.getMinutes()/100)
-
-
-  if (horaMinuto <= 6 && horaMinuto >= 16) {
-    return {
-      error:
-        "Formato invalido de fecha o no se encuentra entre las 6AM y las 6PM",
-    };
-  } else {
-    return false;
-  }
-};
-
-
 import { __ROL__ } from "../constantes/roles.js";
 import {
   partidoSelect,
   partidosEquiposLiderSelect,
 } from "../querys/partidos.js";
+import { validarFecha } from "../helper/index.js";
 
 const miembrosEquipo = ({ data }) => {
   const { usuarios } = data;
@@ -319,7 +296,8 @@ class PartidoService extends Service {
   posponerSolicitudCoordinacion = async ({ id_partido, data }) => {
     try {
       const id_estado = __ESTADOS_PARTIDOS__.PendienteMaestro.id;
-
+      
+      
       const partido_actualizado = await this.database.actualizarUno(
         { ...data, id_estado: id_estado, id_usuarioMaestro: null },
         id_partido
@@ -429,6 +407,8 @@ class PartidoService extends Service {
 
   posponerFecha = async (id, fecha) => {
     try {
+      if(validarFecha(fecha)) throw validarFecha(fecha)
+
       const partido = await Partido.posponerFecha(id, new Date(fecha));
       return partido;
     } catch (error) {

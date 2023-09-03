@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
-export const restaurarContraseñaMailer = async ({ nombre, email, token }) => {
-
+export const restaurarContraseñaMailer = async ({ nombre, email }, token) => {
+  
   const transport = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,

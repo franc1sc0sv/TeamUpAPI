@@ -22,6 +22,8 @@ import {
 } from "./constantes/datosEstaticosDB.js";
 
 import { generarId } from "./helper/generarId.js";
+import { goodResponse } from "./helper/index.js";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/library.js";
 
 dotenv.config();
 
@@ -45,8 +47,22 @@ app.use(BASE_URL + "/tipos-deportes", tipoDeporteRouter);
 app.use(BASE_URL + "/partidos", partidoRouter);
 
 //Default route
-app.get("/", (req, res) => {
-  res.send("Welcome to TeamUp API");
+app.get("/", async(req, res) => {
+  try {
+    const dbWorking = await prisma.$queryRaw`SELECT 1`;
+    return res.status(200).json(goodResponse({
+      server: 1,
+      db: 1
+    }))
+
+  } catch (error) {
+    if(error instanceof PrismaClientInitializationError){
+      return res.status(200).json(goodResponse({
+        server: 1,
+        db: 0
+      }))
+    }
+  }
 });
 
 //Initialize server
@@ -61,7 +77,7 @@ const prisma = new PrismaClient();
 const arrayEstadosPartidos = Object.values(__ESTADOS_PARTIDOS__);
 const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
 //Crear datos por defecto
-!(async function () {
+(async function () {
   try {
     const isPartidoEstados = await prisma.partidosEstado.findFirst();
 
@@ -111,6 +127,6 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
       });
     }
   } catch (error) {
-    throw { status: "FAILED", data: { error: error?.message || error } };
+    
   }
 })();
