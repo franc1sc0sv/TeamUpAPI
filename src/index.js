@@ -36,6 +36,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static("./uploads"));
+process.env.TZ = 'America/El_Salvador';
 
 //Router
 app.use(BASE_URL + "/usuario", usuarioRouter);
