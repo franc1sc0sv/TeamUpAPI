@@ -24,6 +24,7 @@ import {
 import { generarId } from "./helper/generarId.js";
 import { goodResponse } from "./helper/index.js";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/library.js";
+import cloudinary from "./utils/cloudinary.js";
 
 dotenv.config();
 
@@ -36,7 +37,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static("./uploads"));
-process.env.TZ = 'America/El_Salvador';
+process.env.TZ = "America/El_Salvador";
 
 //Router
 app.use(BASE_URL + "/usuario", usuarioRouter);
@@ -48,20 +49,23 @@ app.use(BASE_URL + "/tipos-deportes", tipoDeporteRouter);
 app.use(BASE_URL + "/partidos", partidoRouter);
 
 //Default route
-app.get("/", async(req, res) => {
+app.get("/", async (req, res) => {
   try {
     const dbWorking = await prisma.$queryRaw`SELECT 1`;
-    return res.status(200).json(goodResponse({
-      server: 1,
-      db: 1
-    }))
-
-  } catch (error) {
-    if(error instanceof PrismaClientInitializationError){
-      return res.status(200).json(goodResponse({
+    return res.status(200).json(
+      goodResponse({
         server: 1,
-        db: 0
-      }))
+        db: 1,
+      })
+    );
+  } catch (error) {
+    if (error instanceof PrismaClientInitializationError) {
+      return res.status(200).json(
+        goodResponse({
+          server: 1,
+          db: 0,
+        })
+      );
     }
   }
 });
@@ -80,6 +84,29 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
 //Crear datos por defecto
 (async function () {
   try {
+    await cloudinary.api.resource(
+      "Default/default_avatar",
+      async (error, result) => {
+        if (error) {
+          if (error.http_code === 404) {
+            await cloudinary.uploader.upload(
+              "uploads/default/defaultAvatar.png",
+              {
+                public_id: "default_avatar",
+                folder: "Default",
+              }
+            );
+            console.log("Imagen por defecto creado en cloudary");
+          } else {
+            console.error(
+              "Error al verificar la imagen en Cloudinary:",
+              error.message
+            );
+          }
+        }
+      }
+    );
+
     const isPartidoEstados = await prisma.partidosEstado.findFirst();
 
     if (!isPartidoEstados) {
@@ -123,11 +150,8 @@ const arrayNivelesAcacemicos = Object.values(__NIVELES_ACADEMICOS__);
           id_nivelAcademico: 1,
           nombre: "Juan",
           role: "COORDINADOR",
-          token: generarId(),
         },
       });
     }
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 })();

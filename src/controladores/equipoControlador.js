@@ -236,7 +236,7 @@ class EquipoController extends Controller {
       const payload = await this.service.obtenerUnEquipo({
         id,
         equiposUsuario,
-        usuario: req.usuario
+        usuario: req.usuario,
       });
       return res.status(200).json({ status: "OK", data: payload });
     } catch (error) {
@@ -259,30 +259,43 @@ class EquipoController extends Controller {
       return res.status(500).json(error);
     }
   };
-  buscarEquipo = async(req,res)=>{
+  buscarEquipo = async (req, res) => {
     try {
-       const {nombre} = verificarSiEquipoJuegaMaestrosEsquema.parse(req.body);
-       
-        const equipo = await equipoServicio.buscarEquipo(nombre);
+      const { nombre } = verificarSiEquipoJuegaMaestrosEsquema.parse(req.body);
 
-       return res.status(200).json({status: 'OK', data: equipo})
+      const equipo = await equipoServicio.buscarEquipo(nombre);
+
+      return res.status(200).json({ status: "OK", data: equipo });
     } catch (error) {
-        if(!zodResponse(res,error)){
-          return res.status(400).json(error);
-        }
+      if (!zodResponse(res, error)) {
+        return res.status(400).json(error);
+      }
     }
-  }
-
-  unirseEquipoPorToken = async (req,res) => {
+  };
+  unirseEquipoPorToken = async (req, res) => {
     try {
-      const {token} = req.params;
-      const equipoUsuario = await equipoServicio.unirseEquipoPorToken(token, req.usuario);
-    
-      return res.status(200).json(goodResponse(equipoUsuario))
+      const { token } = req.params;
+      const equipoUsuario = await equipoServicio.unirseEquipoPorToken(
+        token,
+        req.usuario
+      );
+
+      return res.status(200).json(goodResponse(equipoUsuario));
     } catch (error) {
-      return res.status(400).json(errorJSON(error))
+      return res.status(400).json(errorJSON(error));
     }
-  }
+  };
+  eliminarEquipo = async (req, res) => {
+    try {
+      const id_equipo = req.params.id;
+      await this.service.eliminarEquipo({ id_equipo });
+      return res
+        .status(200)
+        .json({ status: "OK", data: "Eliminado con exito" });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  };
 }
 
 const equipoControlador = new EquipoController(

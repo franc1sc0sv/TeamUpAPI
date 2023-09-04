@@ -2,12 +2,6 @@
 node_modules
 # Keep environment variables out of version control
 .env
-# Keep images out of version control
-uploads/avatars/*.jpg
-uploads/avatars/*.png
-uploads/zonaJuegos/*.jpg
-uploads/zonaJuegos/*.png
-
 
 #Build
 api-build.js

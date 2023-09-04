@@ -7,11 +7,9 @@ import { esMiembroDeGrupo } from "../middleware/esMiembroDeGrupo.js";
 import { esLiderOMiembroDeEquipo } from "../middleware/esLiderOMiembroDeEquipo.js";
 import { __ROL__ } from "../constantes/roles.js";
 
-import multer from "multer";
+import upload from "../utils/multer.js";
 
 export const equipoRouter = Router();
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 equipoRouter.get(
   "/unirse/:token",
@@ -67,7 +65,7 @@ equipoRouter
   .delete(
     autentifiacion(__ROL__.ESTUDIANTE),
     esLiderDeEquipo,
-    equipoControlador.eliminarUno
+    equipoControlador.eliminarEquipo
   );
 
 equipoRouter

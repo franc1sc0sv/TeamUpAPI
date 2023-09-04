@@ -2,12 +2,8 @@ import { Service } from "../clases/Servicios.js";
 import { equipo } from "../db/equipo.js";
 import { usuariosEquipos } from "../db/usuariosEquipos.js";
 import bcrypt from "bcrypt";
-import fs from "fs";
-import sharp from "sharp";
 import { generarId } from "../helper/generarId.js";
-
-const BASE_URL_IMAGES = "uploads/avatars/";
-const DEFAULT_IMAGE_URL = "uploads/default/defaultAvatar.png";
+import cloudinary from "../utils/cloudinary.js";
 
 class EquipoService extends Service {
   crearEquipo = async (data, usuario) => {
@@ -18,12 +14,15 @@ class EquipoService extends Service {
       });
       if (equipo) return { error: "El nombre actualmente esta ocupado" };
 
+      const result = await cloudinary.api.resource("Default/default_avatar");
+
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password_access, salt);
 
       const mappedData = {
         nombre: nombre,
-        avatar_url: DEFAULT_IMAGE_URL,
+        avatar_url: result.url,
+        public_id: result.public_id,
         password_access: hashedPassword,
         id_lider: usuario.id,
         password_token: generarId(),
@@ -106,7 +105,7 @@ class EquipoService extends Service {
         id_equipo: id,
         id_usuarios: id_lider,
       };
-      
+
       await usuariosEquipos.crear(newMiembrEquipoData);
 
       const payload = await this.database.actualizarUno(data, id);
@@ -121,8 +120,6 @@ class EquipoService extends Service {
 
       if (mappedData.new_password_access) {
         const { new_password_access } = mappedData;
-
-
 
         const salt = await bcrypt.genSalt(10);
         const newHasedPassword = await bcrypt.hash(new_password_access, salt);
@@ -142,22 +139,21 @@ class EquipoService extends Service {
     try {
       const mappedData = {};
       const equipo = await this.database.obtenerUno(id);
-      const { avatar_url } = equipo;
+      const { public_id } = equipo;
 
-      // Como hay que eliminar la imagen anterior (si no es la default)
-      if (avatar_url !== DEFAULT_IMAGE_URL) {
-        // Hay que borrar la imagen anterior
-        fs.unlink(avatar_url, (err) => {
-          if (err) {
-            console.error(err);
-            return { error: "Error al eliminar las imagenes" };
-          }
-        });
+      if (public_id !== "default_avatar") {
+        await cloudinary.uploader.destroy(public_id);
       }
 
-      const URL_IMAGEN = BASE_URL_IMAGES + Date.now() + "-" + file.originalname;
-      await sharp(file.buffer).resize(180, 180).toFile(URL_IMAGEN);
-      mappedData.avatar_url = URL_IMAGEN;
+      const IMAGEN = Date.now() + "-" + file.originalname.split(".")[0];
+
+      const result = await cloudinary.uploader.upload(file.path, {
+        public_id: IMAGEN,
+        folder: "Avatars",
+      });
+
+      mappedData.avatar_url = result.url;
+      mappedData.public_id = result.public_id;
 
       const payload = await this.database.actualizarUno(mappedData, id);
       return payload;
@@ -169,13 +165,13 @@ class EquipoService extends Service {
     {
       try {
         const equipo = equiposUsuario.filter((equipo) => equipo.id === id);
- 
+
         if (!equipo?.length) {
           return { error: "No perteneces al equipo o no existe" };
         }
 
-        if(equipo.id_lider!=usuario.id){
-            delete equipo[0].password_token
+        if (equipo.id_lider != usuario.id) {
+          delete equipo[0].password_token;
         }
 
         return equipo[0];
@@ -230,17 +226,16 @@ class EquipoService extends Service {
       throw error;
     }
   };
-
-  unirseEquipoPorToken = async(token, usuario)=>{
+  unirseEquipoPorToken = async (token, usuario) => {
     try {
       //Buscar si el token es valido
       const team = await equipo.buscarEquipoPorToken(token);
-      if(!team) throw {error: "Equipo no encontrado"}
+      if (!team) throw { error: "Equipo no encontrado" };
 
       //Checar si el usuario esta en el equipo
       const enEquipo = await equipo.estaEnEquipo(team.id, usuario.id);
-      if(enEquipo) throw {error: "Usuario ya esta en equipo"}
-      
+      if (enEquipo) throw { error: "Usuario ya esta en equipo" };
+
       //Unir al usuario al equipo
       await equipo.unirseEquipo(team.id, usuario.id);
 
@@ -252,7 +247,19 @@ class EquipoService extends Service {
     } catch (error) {
       throw error;
     }
-  }
+  };
+  eliminarEquipo = async ({ id_equipo }) => {
+    try {
+      const equipo = await this.database.obtenerUno(id_equipo);
+      if (!equipo) return { error: "El equipo no existe" };
+      const { public_id } = equipo;
+      await cloudinary.uploader.destroy(public_id);
+      await this.database.eliminarUno(id_equipo);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const equipoServicio = new EquipoService(equipo);

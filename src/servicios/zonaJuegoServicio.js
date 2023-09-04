@@ -3,6 +3,8 @@ import { zonaJuego } from "../db/zonaJuego.js";
 import sharp from "sharp";
 import fs from "fs";
 
+import cloudinary from "../utils/cloudinary.js";
+
 import { imagesZonaJuegos } from "../db/imagenesZonaJuegos.js";
 
 const BASE_URL_IMAGES = "uploads/zonaJuegos/";
@@ -21,12 +23,17 @@ class ZonaJuegoService extends Service {
       };
 
       for (const image of files) {
-        const URL_IMAGES =
-          BASE_URL_IMAGES + Date.now() + "-" + image.originalname;
+        const IMAGEN = Date.now() + "-" + image.originalname.split(".")[0];
 
-        await sharp(image.buffer).resize(800, 600).toFile(URL_IMAGES);
+        const result = await cloudinary.uploader.upload(image.path, {
+          public_id: IMAGEN,
+          folder: "ZonasDeJuegos",
+        });
 
-        mappedData.imagenes.create.push({ imagen_url: URL_IMAGES });
+        mappedData.imagenes.create.push({
+          imagen_url: result.url,
+          public_id: result.public_id,
+        });
       }
       const payload = await this.database.crear(mappedData);
       return payload;
@@ -57,14 +64,9 @@ class ZonaJuegoService extends Service {
       if (!zonaJuego) return { error: "Zona de juego no existe" };
 
       const { imagenes } = zonaJuego;
-      imagenes.forEach((imagen) => {
-        const { imagen_url } = imagen;
-        fs.unlink(imagen_url, (err) => {
-          if (err) {
-            console.error(err);
-            return { error: "Error al eliminar las imagenes" };
-          }
-        });
+      imagenes.forEach(async (imagen) => {
+        const { public_id } = imagen;
+        await cloudinary.uploader.destroy(public_id);
       });
 
       await this.database.eliminarUno(id);
@@ -99,14 +101,9 @@ class ZonaJuegoService extends Service {
         await imagesZonaJuegos.eliminarUno(id);
       });
 
-      deletedImages.forEach((imagen) => {
-        const { imagen_url } = imagen;
-        fs.unlink(imagen_url, (err) => {
-          if (err) {
-            console.error(err);
-            return { error: "Error al eliminar las imagenes" };
-          }
-        });
+      deletedImages.forEach(async (imagen) => {
+        const { public_id } = imagen;
+        await cloudinary.uploader.destroy(public_id);
       });
 
       //Formateando la data
@@ -114,13 +111,19 @@ class ZonaJuegoService extends Service {
       mappedData.imagenes = {};
       mappedData.imagenes.create = [];
       // Guardando imagenes
+
       for (const image of files) {
-        const URL_IMAGES =
-          BASE_URL_IMAGES + Date.now() + "-" + image.originalname;
+        const IMAGEN = Date.now() + "-" + image.originalname.split(".")[0];
 
-        await sharp(image.buffer).resize(800, 600).toFile(URL_IMAGES);
+        const result = await cloudinary.uploader.upload(image.path, {
+          public_id: IMAGEN,
+          folder: "ZonasDeJuegos",
+        });
 
-        mappedData.imagenes.create.push({ imagen_url: URL_IMAGES });
+        mappedData.imagenes.create.push({
+          imagen_url: result.url,
+          public_id: result.public_id,
+        });
       }
 
       delete mappedData.imagen_eliminadas;

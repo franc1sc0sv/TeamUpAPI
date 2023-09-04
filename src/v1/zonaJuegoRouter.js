@@ -2,12 +2,7 @@ import { Router } from "express";
 import { zonaJuegoControlador } from "../controladores/zonaJuegoControlador.js";
 import { autentifiacion } from "../middleware/autentificacion.js";
 import { __ROL__ } from "../constantes/roles.js";
-import multer from "multer";
-
-// Configuración de Multer
-//Esto es para que guarde la imagen en memoria
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+import upload from "../utils/multer.js";
 
 export const zonaJuegoRouter = Router();
 
