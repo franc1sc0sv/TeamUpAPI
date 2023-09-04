@@ -139,7 +139,6 @@ class UsuarioService extends Service {
 
   restaurarContraseña = async (data) => {
     try {
-      
       const usuario = await this.database.encontrarPorObjeto({
         email: data.email,
       });
@@ -148,13 +147,13 @@ class UsuarioService extends Service {
 
       const tokenEmail = generarId();
 
-      await this.database.actualizarUno({tokenEmail}, usuario.id)
+      await this.database.actualizarUno({ tokenEmail }, usuario.id);
 
-      await restaurarContraseñaMailer(usuario,tokenEmail);
+      await restaurarContraseñaMailer(usuario, tokenEmail);
 
       return true;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw error;
     }
   };
@@ -163,7 +162,9 @@ class UsuarioService extends Service {
     try {
       const { token, password, confirm_password } = data;
 
-      const usuario = await this.database.encontrarPorObjeto({ tokenEmail: token });
+      const usuario = await this.database.encontrarPorObjeto({
+        tokenEmail: token,
+      });
 
       if (!usuario) return { error: "token_invalido" };
 
@@ -176,12 +177,12 @@ class UsuarioService extends Service {
       const { id } = usuario;
 
       const mappedData = {
-        tokenEmail: '',
+        tokenEmail: "",
         password: hashedPassword,
       };
 
       const payload = await this.database.actualizarUno(mappedData, id);
-      
+
       delete payload.token;
       delete payload.password;
 
@@ -191,12 +192,14 @@ class UsuarioService extends Service {
     }
   };
 
-  
-  verificarToken = async (token)=>{
-    const tokenEmail = await this.database.encontrarPorObjeto({tokenEmail: token})
+  verificarToken = async (token) => {
+    const tokenEmail = await this.database.encontrarPorObjeto({
+      tokenEmail: token,
+    });
 
     if (!tokenEmail) throw { error: "El token es invalido" };
-  }
+  };
+
   estadisticasCoordinacion = async () => {
     try {
       const estadisticas = await usuario.estadisticasCoordinacion();
