@@ -253,7 +253,9 @@ class EquipoService extends Service {
       const equipo = await this.database.obtenerUno(id_equipo);
       if (!equipo) return { error: "El equipo no existe" };
       const { public_id } = equipo;
-      await cloudinary.uploader.destroy(public_id);
+      if(public_id){
+        await cloudinary.uploader.destroy(public_id);
+      }
       await this.database.eliminarUno(id_equipo);
       return true;
     } catch (error) {
