@@ -4,9 +4,9 @@
   "description": "TeamUpAPI",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "npm i && npx prisma migrate deploy",
     "dev": "nodemon ./src/index.js",
-    "start": "node api-build.cjs"
+    "start": "node ./src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -31,9 +31,7 @@
     "esm": "^3.2.25",
     "nodemon": "^2.0.22",
     "path": "^0.12.7",
-    "prisma": "^5.0.0",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
+    "prisma": "^5.0.0"
   },
   "type": "module"
 }

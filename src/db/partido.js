@@ -358,8 +358,6 @@ class PartidoDB extends Database {
         select: partidoSelect,
       });
 
-      console.log(partido.resultado);
-
       await prisma.partidoResultado.update({
         where: {
           id_partido: +id_partido,

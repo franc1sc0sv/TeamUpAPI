@@ -16,9 +16,6 @@ class UsuarioService extends Service {
         return null;
       }
 
-      data.nombre = data.nombre + " " + data.apellido;
-      delete data.apellido;
-
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
       // Si no hay petición de olvidar contraseña no es necesario

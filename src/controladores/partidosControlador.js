@@ -418,9 +418,12 @@ class PartidoController extends Controller {
 
   aceptarResultados = async (req,res) => {
     try {
-      const {id} = req.params
+      const { id } = req.params
+      
       const partido = await partidoServicio.aceptarResultados(+id, req.usuario);
+      
       return res.status(200).json(goodResponse(partido));
+    
     } catch (error) {
       return res.status(400).json(errorJSON(error))
     }
