@@ -21,7 +21,7 @@ class EquipoService extends Service {
 
       const mappedData = {
         nombre: nombre,
-        avatar_url: "/uploads/default/defaultAvatar.png",
+        avatar_url: process.env.URL_BACKEND+"/uploads/default/defaultAvatar.png",
         public_id: '',
         password_access: hashedPassword,
         id_lider: usuario.id,
