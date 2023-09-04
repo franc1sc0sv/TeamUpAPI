@@ -51,14 +51,19 @@ app.use(BASE_URL + "/partidos", partidoRouter);
 //Default route
 app.get("/", async (req, res) => {
   try {
+   
     const dbWorking = await prisma.$queryRaw`SELECT 1`;
+
     return res.status(200).json(
       goodResponse({
         server: 1,
         db: 1,
       })
     );
+
+
   } catch (error) {
+    console.log(error)
     if (error instanceof PrismaClientInitializationError) {
       return res.status(200).json(
         goodResponse({
