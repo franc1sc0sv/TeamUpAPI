@@ -7,6 +7,7 @@ import {
   usuarioLogeoEsquema,
   emailEsquema,
   changePasswordEsquema,
+  verificarCorreoToken,
 } from "../esquemas/usuariosEsquemas.js";
 
 import { ZodError } from "zod";
@@ -87,6 +88,7 @@ class UsuarioController extends Controller {
 
       return res.status(201).json({ status: "OK", data: payload });
     } catch (error) {
+      console.log(error);
       if (error instanceof ZodError) {
         const zodError = mostrarZodError(error);
 
@@ -244,16 +246,16 @@ class UsuarioController extends Controller {
     }
   };
 
-  verificarToken = async (req,res) => { 
+  verificarToken = async (req, res) => {
     try {
-      await usuarioServicio.verificarToken(req.params.token ?? '');
-      
-      return res.status(200).json(goodResponse({message: "Token Valido !"}))
+      await usuarioServicio.verificarToken(req.params.token ?? "");
+
+      return res.status(200).json(goodResponse({ message: "Token Valido !" }));
     } catch (error) {
-      console.log(error)
-      return res.status(500).json(errorJSON({message: "Token invalido"}))
+      console.log(error);
+      return res.status(500).json(errorJSON({ message: "Token invalido" }));
     }
-   }
+  };
 
   estadisticasEstudiante = async (req, res) => {
     try {
@@ -261,6 +263,27 @@ class UsuarioController extends Controller {
         req.usuario.id
       );
       return res.status(200).json(goodResponse(estadisicas));
+    } catch (error) {
+      return res.status(400).json(errorJSON(error));
+    }
+  };
+
+  verificarCorreo = async (req, res) => {
+    try {
+      const rawdata = req.body;
+      const data = verificarCorreoToken.parse(rawdata);
+      const payload = await usuarioServicio.verificarCorreo(data);
+
+      if (payload.error) {
+        return res.status(400).json({
+          status: "FAILED",
+          data: { error: payload.error },
+        });
+      }
+      return res.status(200).json({
+        status: "OK",
+        data: payload,
+      });
     } catch (error) {
       return res.status(400).json(errorJSON(error));
     }

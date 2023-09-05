@@ -15,14 +15,15 @@ class EquipoService extends Service {
       if (equipo) return { error: "El nombre actualmente esta ocupado" };
 
       // const result = await cloudinary.api.resource("Default/default_avatar");
-  
+
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password_access, salt);
 
       const mappedData = {
         nombre: nombre,
-        avatar_url: process.env.URL_BACKEND+"/uploads/default/defaultAvatar.png",
-        public_id: '',
+        avatar_url:
+          process.env.URL_BACKEND + "/uploads/default/defaultAvatar.png",
+        public_id: "",
         password_access: hashedPassword,
         id_lider: usuario.id,
         password_token: generarId(),
@@ -141,7 +142,10 @@ class EquipoService extends Service {
       const equipo = await this.database.obtenerUno(id);
       const { avatar_url, public_id } = equipo;
 
-      if (avatar_url !== "/uploads/default/defaultAvatar.png") {
+      if (
+        avatar_url !==
+        process.env.URL_BACKEND + "/uploads/default/defaultAvatar.png"
+      ) {
         await cloudinary.uploader.destroy(public_id);
       }
 
@@ -253,7 +257,7 @@ class EquipoService extends Service {
       const equipo = await this.database.obtenerUno(id_equipo);
       if (!equipo) return { error: "El equipo no existe" };
       const { public_id } = equipo;
-      if(public_id){
+      if (public_id) {
         await cloudinary.uploader.destroy(public_id);
       }
       await this.database.eliminarUno(id_equipo);

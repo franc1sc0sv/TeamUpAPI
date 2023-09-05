@@ -3,6 +3,7 @@ import { usuario } from "../db/usuario.js";
 import bcrypt from "bcrypt";
 import { generarId } from "../helper/generarId.js";
 import { restaurarContraseñaMailer } from "../helper/email.js";
+import { verificacionCorreo } from "../helper/emailVerificar.js";
 
 class UsuarioService extends Service {
   crearCuentaEstudiante = async (data) => {
@@ -18,11 +19,12 @@ class UsuarioService extends Service {
 
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(data.password, salt);
-      // Si no hay petición de olvidar contraseña no es necesario
-      // data.token = generarId();
       data.role = "ESTUDIANTE";
 
-      const nuevoUsuario = this.database.crear(data);
+      const nuevoUsuario = await this.database.crear(data);
+
+      await verificacionCorreo(nuevoUsuario);
+
       return nuevoUsuario;
     } catch (error) {
       throw error;
@@ -62,6 +64,10 @@ class UsuarioService extends Service {
       });
 
       if (!usuarioEncontrado) return { error: "usuario_no_encontrado" };
+
+      if (usuarioEncontrado.tokenVerificar) {
+        return { error: "cuenta_no_verificada" };
+      }
 
       const contraseñaValida = await bcrypt.compare(
         password,
@@ -213,6 +219,21 @@ class UsuarioService extends Service {
     try {
       const estadistias = await usuario.estadisticasEstudiante(id);
       return estadistias;
+    } catch (error) {
+      throw error;
+    }
+  };
+  verificarCorreo = async (data) => {
+    try {
+      const user = await usuario.encontrarPorObjeto({
+        tokenVerificar: data.token,
+      });
+      if (!user) return { error: "token_error" };
+      const updateuser = await usuario.actualizarUno(
+        { tokenVerificar: "" },
+        user.id
+      );
+      return updateuser;
     } catch (error) {
       throw error;
     }

@@ -27,6 +27,12 @@ const usuarioEsquema = z.object({
     .or(z.number({ required_error: "nivel_academico_requerido" })),
 });
 
+export const verificarCorreoToken = z.object({
+  token: z
+    .string({ required_error: "token_requerido" })
+    .nonempty("token_vacio"),
+});
+
 const emailEsquema = z.object({
   email: z
     .string({ required_error: "email_requerido" })
