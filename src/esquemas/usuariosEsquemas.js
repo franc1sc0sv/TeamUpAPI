@@ -10,6 +10,7 @@ const usuarioEsquema = z.object({
   nombre: z
     .string({ required_error: "nombre_requerido" })
     .nonempty("nombre_vacio"),
+  apellido: z.string().optional(), 
   email: z
     .string({ required_error: "email_requerido" })
     .email({ message: "email_invalido" })
