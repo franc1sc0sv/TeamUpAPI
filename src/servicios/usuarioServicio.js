@@ -46,6 +46,7 @@ class UsuarioService extends Service {
       data.password = await bcrypt.hash(data.password, salt);
       data.role = "MAESTRO";
       data.tokenEmail = generarId();
+      data.tokenVerificar = "";
 
       const nuevoUsuario = this.database.crear(data);
 
