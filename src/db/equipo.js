@@ -49,7 +49,7 @@ class EquiposDB extends Database {
               usuarios: true,
             },
           },
-          lider: true
+          lider: true,
         },
       });
 
@@ -78,7 +78,6 @@ class EquiposDB extends Database {
     }
   };
 
-
   estaEnEquipo = async (id_equipo, id_usuarios) => {
     try {
       const enEquipo = await prisma.usuariosEquipos.findFirst({
@@ -87,52 +86,55 @@ class EquiposDB extends Database {
           id_usuarios,
         },
       });
-      
-      if(!enEquipo) {
+      console.log(id_equipo, id_usuarios);
+      console.log(enEquipo);
+
+      if (!enEquipo) {
         const esLider = await prisma.equipos.findFirst({
           where: {
-            id_lider: id_usuarios
-          }
-        })
+            id: id_equipo,
+            id_lider: id_usuarios,
+          },
+        });
+        console.log(esLider);
 
-        return esLider
+        return esLider;
       }
-
 
       return enEquipo;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   };
-  buscarEquipoPorToken = async (token)=>{
+  buscarEquipoPorToken = async (token) => {
     try {
       const equipo = await prisma.equipos.findFirst({
         where: {
-          invitaciones_token: token
-        }
-      })
+          invitaciones_token: token,
+        },
+      });
       return equipo;
     } catch (error) {
       throw error;
     }
-  }
-  actualizarToken = async(id_equipo)=>{
+  };
+  actualizarToken = async (id_equipo) => {
     try {
       const equipo = await prisma.equipos.update({
         where: {
-          id: id_equipo
+          id: id_equipo,
         },
         data: {
-          invitaciones_token: generarId()
-        }
-      })
+          invitaciones_token: generarId(),
+        },
+      });
 
       return equipo;
     } catch (error) {
       throw error;
     }
-  }
+  };
   unirseEquipo = async (id_equipo, id_usuarios) => {
     try {
       const usuarioEquipo = await prisma.usuariosEquipos.create({
@@ -147,7 +149,6 @@ class EquiposDB extends Database {
       throw error;
     }
   };
-
 }
 
 const equipo = new EquiposDB("equipos");
